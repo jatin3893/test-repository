@@ -18,6 +18,7 @@ files[] = {"path":"index1.json","metaData":{}}
 files[] = {"path":"index9.json","metaData":{}}
 files[] = {"path":"index2.json","metaData":{}}
 files[] = {"path":"index3.json","metaData":{}}
+files[] = {"path":"index11.json","metaData":{}}
 
 [relations.apiDefinition.metaData]
 type = openapi:3
