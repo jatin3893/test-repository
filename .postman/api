@@ -1,23 +1,26 @@
-id = 64bb9df8-66a1-4f59-8118-af766dd01d75
+id = 3717c0ea-9aa2-475b-a8b6-2d68553a6931
 
 [relations]
 
 [relations.collections]
 rootDirectory = postman/collections
+files[] = {"id":"23be73ea-6b24-45df-bd56-e6353e95e589","path":"C1.json","metaData":{}}
 
 [relations.collections.metaData]
 
 [relations.apiDefinition]
 rootDirectory = postman/schemas
-files[] = {"path":"index7.json","metaData":{}}
-files[] = {"path":"index9.json","metaData":{}}
+files[] = {"path":"index.json","metaData":{}}
+files[] = {"path":"index1.json","metaData":{}}
 files[] = {"path":"index10.json","metaData":{}}
-files[] = {"path":"index4.json","metaData":{}}
+files[] = {"path":"index2.json","metaData":{}}
 files[] = {"path":"index3.json","metaData":{}}
+files[] = {"path":"index4.json","metaData":{}}
 files[] = {"path":"index5.json","metaData":{}}
 files[] = {"path":"index6.json","metaData":{}}
+files[] = {"path":"index7.json","metaData":{}}
 files[] = {"path":"index8.json","metaData":{}}
-files[] = {"path":"index1.json","metaData":{}}
+files[] = {"path":"index9.json","metaData":{}}
 
 [relations.apiDefinition.metaData]
 type = openapi:3
