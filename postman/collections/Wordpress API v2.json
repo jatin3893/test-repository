@@ -1,0 +1,4221 @@
+{
+	"info": {
+		"_postman_id": "a261d5c3-82f9-4c86-a6eb-934b3959a54b",
+		"name": "Wordpress API v2",
+		"description": "The WordPress REST API provides API endpoints for WordPress data types that allow developers to interact with sites remotely by sending and receiving JSON.\n\n# Why use the WordPress REST API\nThe WordPress REST API makes it easier than ever to use WordPress in new and exciting ways, such as creating Single Page Applications on top of WordPress. You could create a plugin to provide an entirely new admin experiences for WordPress, or create a brand new interactive front-end experience.\n\n# Key Concepts\nTo get started with using the WordPress REST API we will break down some of the key concepts and terms associated with the API:\n* Routes/Endpoints\n* Requests\n* Responses\n* Schema\n* Controller Classes\n\nEach of these concepts play a crucial role in using and understanding the WordPress REST API. Let’s briefly break them down so that we can later explore each in greater depth.\n\n# Routes & Endpoints\nA route, in the context of the WordPress REST API, is a URI which can be mapped to different HTTP methods. The mapping of an individual HTTP method to a route is known as an _“endpoint”_. To clarify: If we make a **GET** request to _http://oursite.com/wp-json/_, we will get a JSON response showing us what routes are available, and within each route, what endpoints are available. _/wp-json/_ is a route itself and when a **GET** request is made it matches to the endpoint that displays what is known as the index for the WordPress REST API. \n\n> Note:\n  If you’re using non-pretty permalinks, you should pass the REST API route as a query string parameter. The route http://oursite.com/wp-json/ in the example above would hence be http://oursite.com/?rest_route=/.\n\n\n# Schema\nEach endpoint requires and provides slightly different data structures, and those structures are defined in the API Schema. The schema structures API data and provides a comprehensive list of all of the properties the API can return and input parameters it can accept. \nSchema also provides security benefits for the API, as it enables us to validate the requests being made to the API. The Schema section further explores this large topic.\n\n# Authorization\n\nSome of the endpoints require special role permissions which may require more setup in your Wordpress instance, such as downloading a role permissions editor tool. \n\n# Cookie Authentication\nCookie authentication is the standard authentication method included with WordPress. When you log in to your dashboard, this sets up the cookies correctly for you, so plugin and theme developers need only to have a logged-in user.\n\nHowever, the REST API includes a technique called **_nonces_** to avoid CSRF issues. This prevents other sites from forcing you to perform actions without explicitly intending to do so. This requires slightly special handling for the API.\n\nFor developers using the built-in Javascript API, this is handled automatically for you. This is the recommended way to use the API for plugins and themes. Custom data models can extend **_wp.api.models.Base_** to ensure this is sent correctly for any custom requests.\n\nFor developers making manual Ajax requests, the **_nonce_** will need to be passed with each request. The API uses nonces with the action set to **_wp_rest**. These can then be passed to the API via the **_wpnonce** data parameter (either **POST** data or in the query for **GET** requests), or via the **X-WP-Nonce** header. If no nonce is provided the API will set the current user to 0, turning the request into an unauthenticated request, even if you’re logged into WordPress.\n\n> Note: Until recently, most software had spotty support for DELETE requests. For instance, PHP doesn’t   transform the request body of a DELETE request into a super global. As such, supplying the nonce as a   header is the most reliable approach.\n\nIt is important to keep in mind that this authentication method relies on **_WordPress cookies_**. As a result this method is only applicable when the REST API is used inside of WordPress and the current user is logged in. In addition, the current user must have the appropriate capability to perform the action being performed.\n\n\nWhile cookie authentication is the only authentication mechanism available natively within WordPress, plugins may be added to support alternative modes of authentication that will work from remote applications. Some example plugins are OAuth 1.0a Server, Application Passwords, and JSON Web Tokens.\n\n\n# Why is the REST API not verifying the incoming Origin header? Does this expose my site to CSRF attacks?\n**_Cross-Origin Resource Sharing (CORS)_** is a mechanism which allows a website to control which Origins (originating external sites) are allowed to access your site’s data. CORS prevents against a particular type of attack known as **_Cross-Site Request Forgery_**, or CSRF. However, WordPress has an existing CSRF protection mechanism which uses nonces. Tightening CORS restrictions would prevent some authentication methods, so the WordPress REST API uses nonces for CSRF protection instead of CORS.\n\nBecause the **_WordPress REST API does not verify the Origin header of incoming requests_**, public REST API endpoints may therefore be accessed from any site.\n\nThis is an intentional design decision, but if you wish to prevent your site from being accessed from unknown origins you may unhook the default **rest_send_cors_headers** function from the **rest_pre_serve_request** filter hook, then hook in your own function to that same filter to specify stricter CORS headers.\n\n\n\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "23232594-a261d5c3-82f9-4c86-a6eb-934b3959a54b"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "List Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var postNum = parseInt(pm.environment.get(\"postNum\"));",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of  posts\", () => {",
+									"    let actualNum = pm.response.json().length;",
+									"    pm.expect(actualNum).to.equal(postNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "acf5ac56-b4b7-429d-b3c5-afbb5944fae6"
+							}
+						}
+					],
+					"id": "7d7beffb-4353-43e7-bd8c-9e1dc3c49513",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/posts",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"posts"
+							]
+						},
+						"description": "## List Posts\n| | |\n| :-- | :--\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page``` | Current page of collection.<br/>Default:**1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```after```|Limit response to posts published after a given ISO8601 compliant date.\n|```author```|Limit result set to posts assigned to specific authors.\n|```author_exclude```|Ensure result set excludes posts assigned to specific authors.\n|```before```|Limit response to posts published before a given ISO8601 compliant date.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|\tSort collection by object attribute.<br/>Default: **date**<br/>One of: **author, date, id, include, modified, parent, relevance, slug, include_slugs, title**\n|```slug```|Limit result set to posts with one or more specific slugs.\n|```status```|Limit result set to posts assigned one or more statuses.<br/>Default: **publish**\n|```categories```|Limit result set to all items that have the specified term assigned in the categories taxonomy.\n|```categories_exclude```|Limit result set to all items except those that have the specified term assigned in the categories taxonomy.\n|```tags```|Limit result set to all items that have the specified term assigned in the tags taxonomy.\n|```tags_exclude```|Limit result set to all items except those that have the specified term assigned in the tags taxonomy.\n|```sticky```|Limit result set to items that are sticky."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let content = pm.environment.get('content');",
+									"",
+									"",
+									"pm.environment.set(\"postId\", response.id);",
+									"",
+									"pm.test(\"Post is created\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(pm.response.json().title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Excerpt is correct\", () => {",
+									"    pm.expect(pm.response.json().excerpt.raw).to.equal(excerpt);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(pm.response.json().content.raw).to.equal(content);",
+									"});",
+									"",
+									"//set to rendered for title, excerpt, content to be tested against in retrieve",
+									"pm.environment.set(\"title\", response.title.rendered);",
+									"pm.environment.set(\"content\", response.content.rendered);",
+									"pm.environment.set(\"excerpt\", response.excerpt.rendered);"
+								],
+								"type": "text/javascript",
+								"id": "6df67b3f-1d27-42b7-b9df-c37787fc1a04"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"title\", \"Test WAPI Title\");",
+									"pm.environment.set(\"content\", \"Test WAPI Post Content\");",
+									"pm.environment.set(\"excerpt\", \"Test WAPI Excerpt\");"
+								],
+								"type": "text/javascript",
+								"id": "aeb374d7-0023-4b01-a1a4-f7a58884f4e8"
+							}
+						}
+					],
+					"id": "60a5003c-9a5e-4e09-8c8b-c28d7910be29",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/posts?content={{content}}&title={{title}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"posts"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "title",
+									"value": "{{title}}"
+								}
+							]
+						},
+						"description": "| | |\n| :--- | :---\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug``` |An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```author```|The ID for the author of the object.\n|```excerpt```|The excerpt for the object.\n|```featured_media```|The ID of the featured media for the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```format```|The format for the object.<br/>One of: **standard, aside, chat, gallery, link, image, quote, status, video, audio**\n|```meta```|Meta fields.\n|```sticky```|Whether or not the object should be treated as sticky.\n|```template```|The theme file to use to display the object.\n|```categories```|The terms assigned to the object in the category taxonomy.\n|```tags```|The terms assigned to the object in the post_tag taxonomy."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let content = pm.environment.get('content');",
+									"let postId = pm.environment.get(\"postId\");",
+									"",
+									"pm.test(\"Post is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(postId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.rendered).to.equal(title);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(response.content.rendered).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "9e61ced1-a982-4ab6-9b1c-0825fe448dfe"
+							}
+						}
+					],
+					"id": "c5042ce9-b909-4fe1-b131-8f9f0bb4c093",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/posts/{{postId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"posts",
+								"{{postId}}"
+							]
+						},
+						"description": "| | |\n| :--- | :---\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```password```|The password for the post if it is password protected."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Post",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"title\", \"Test WAPI Title Updated\");",
+									"pm.environment.set(\"content\", \"Test WAPI Post Content Updated\");",
+									"pm.environment.set(\"excerpt\", \"Test WAPI Excerpt Updated\");"
+								],
+								"type": "text/javascript",
+								"id": "5fe34f15-230e-499d-bdac-a298c934e313"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let content = pm.environment.get('content');",
+									"let postId = pm.environment.get(\"postId\");",
+									"",
+									"pm.test(\"Post is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(postId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Excerpt is correct\", () => {",
+									"    pm.expect(response.excerpt.raw).to.equal(excerpt);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(response.content.raw).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "75d214e3-ee20-48c0-98e9-f1ab64edf834"
+							}
+						}
+					],
+					"id": "0224aa56-fe52-439b-a6ee-895f7a9bdddd",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/posts/{{postId}}?content={{content}}&title={{title}}&excerpt={{excerpt}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"posts",
+								"{{postId}}"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "title",
+									"value": "{{title}}"
+								},
+								{
+									"key": "excerpt",
+									"value": "{{excerpt}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```author```|The ID for the author of the object.\n|```excerpt```|The excerpt for the object.\n|```featured_media```|The ID of the featured media for the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```format```|The format for the object.<br/>One of: **standard, aside, chat, gallery, link, image, quote, status, video, audio**\n|```meta```|Meta fields.\n|```sticky```|Whether or not the object should be treated as sticky.\n|```template```|The theme file to use to display the object.\n|```categories```|The terms assigned to the object in the category taxonomy.\n|```tags```|The terms assigned to the object in the post_tag taxonomy."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let postId = pm.environment.get(\"postId\");",
+									"",
+									"pm.test(\"Post is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(postId);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "731b840e-cfc0-4077-82c1-06e79d634fdb"
+							}
+						}
+					],
+					"id": "a8eaac05-d963-42f4-84f4-fda260e36c65",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/posts/{{postId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"posts",
+								"{{postId}}"
+							]
+						},
+						"description": "| | |\n| :--- | :---\n|```id```|Unique identifier for the object.\n|```force```|Whether to bypass trash and force deletion."
+					},
+					"response": []
+				}
+			],
+			"id": "e8b3df31-d20a-4e67-ba1d-a29bc4d407ac",
+			"description": "## Schema\n``` The schema defines all the fields that exist for a post object. ```\n\n\n| |    |\n|:-|:- |\n|```date``` <br> datedatestring,datetime ([details](https://core.trac.wordpress.org/ticket/41032)) | The date the object was published, in the site's timezone. <br >Context: **view, edit, embed** |\n| ```date_gmt``` <br >string, datetime ([details](https://core.trac.wordpress.org/ticket/41032)) | The date the object was published, as GMT.<br />Context: **view, edit**\n|```guid``` <br /> object | The globally unique identifier for the object. <br />Read only<br />Context: **view, edit**\n| ```id``` <br /> integer |  Unique identifier for the object.<br /> Read Only <br /> Context: **view, edit, embed**\n| ```link``` <br /> string, uri | Url to the object. <br /> Read Only <br /> Context: **view, edit, embed**\n| ```modified``` <br /> string, datetime ([details](https://core.trac.wordpress.org/ticket/41032)) | The date the object was last modified, in the site's timezone. <br /> Read only <br /> Context: **view, edit**\n| modified_gmt <br /> string, datetime ([details](https://core.trac.wordpress.org/ticket/41032)) | The date the object was last modified, as GMT. <br /> Read only <br /> Context: **view, edit**\n| ```slug``` <br /> string | An alphanumeric identifier for the object unique to its type. <br /> Context: **view, edit**\n| ```status``` <br /> string | A named status for the object. <br /> Context: **view, edit** <br /> One of: **publish, future, draft, pending, private**\n| ```type``` <br /> string | Type of Post for the object. <br /> Read Only <br /> Context: **view, edit, embed**\n| ```password``` <br /> string | A password to protect access to the content and excerpt. <br/> Context: **edit**\n| ```permalink_template``` <br/> string | Permalink template for the object <br/> Read Only <br/> Context: **edit**\n| ```generated_slug``` <br/> string | Permalink template for the object. <br/> Read only <br/> Context: **edit**\n|```title``` <br/> object | The title for the object. <br/> Context: **view, edit, embed**\n| ```content``` <br/> object | The content for the object. <br/>Context: **view, edit**\n|```author``` <br/> integer | The ID for the author of the object<br/>Context:**view, edit, embed**\n|```excerpt```<br/>object | The exerpt of the object.<br/>Context:**view, edit, embed**\n|```featured_media```<br/>integer | The ID of the featured media for the object<br/>Context: **view, edit, embed**\n|```comment_status```<br/>string | Whether or not comments are open on the object.<br/>Context: **view, edit**<br />One of:**open, closed**\n|```ping_status```<br/>string | Whether or not the object can be pinged.<br/>Context: **open, closed**\n|```format```<br/>string | The format for the object.<br/>Context: **view, edit**<br/>One of: **standard, aside, chat, gallery, link, image, quote, status, video, audio**\n|```meta```<br/>object | Meta fields.<br/>Context: **view, edit**\n|```sticky```<br/>boolean | Whether or not the object should be treated as sticky.<br/>Context: **view, edit**\n|```template```<br/>string | The theme file to use to display the object.<br/>Context: **view, edit**\n|```categories```<br/>array | The terms assigned to the object in the category taxonomy.<br/>Context: **view, edit**\n|```tags```<br/>array | The terms assigned to the object in the post_tag taxonomy.<br/>Context: **view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "bae0f328-709c-46e9-9c5c-af2f13fb91a6"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "4e3e4b72-79a6-471a-a8ba-9f1b6eab11b0"
+					}
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "List Media ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var mediaNum = parseInt(pm.environment.get(\"mediaNum\"));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of  posts\", () => {",
+									"    let actualNum = pm.response.json().length;",
+									"    pm.expect(actualNum).to.equal(mediaNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "e9203031-8b44-4a7a-bcf4-134ad384735b"
+							}
+						}
+					],
+					"id": "25bc96ff-ea97-4a86-9958-b764a7066939",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/media",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"media"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```after```|Limit response to posts published after a given ISO8601 compliant date.\n|```author```|Limit result set to posts assigned to specific authors.\n|```author_exclude```|Ensure result set excludes posts assigned to specific authors.\n|```before```|Limit response to posts published before a given ISO8601 compliant date.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default: **date**<br/>One of: **author, date, id, include, modified, parent, relevance, slug, include_slugs, title**\n|```parent```|Limit result set to items with particular parent IDs.\n|```parent_exclude```|Limit result set to all items except those of a particular parent ID.\n|```slug```|Limit result set to posts with one or more specific slugs.\n|```status```|Limit result set to posts assigned one or more statuses.<br/>Default: **inherit**\n|```media_type```|Limit result set to attachments of a particular media type.<br/>One of: **image, video, audio, application**\n|```mime_type```|Limit result set to attachments of a particular MIME type."
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Media item ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"pm.environment.set(\"mediaId\", response.id);",
+									"",
+									"pm.test(\"response is created\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "8cc759a6-7b43-448a-a97d-4d1ee43d22e6"
+							}
+						}
+					],
+					"id": "b1aec2e1-90f7-4c2f-a84c-10da3ca5cfd0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Disposition",
+								"name": "Content-Type",
+								"value": "form-data; filename=\"test_funny.jpg\"",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "image/jpeg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test-file",
+									"value": "{{file}}",
+									"description": "some test param",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/media",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"media"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```title```|The title for the object.\n|```author```|The ID for the author of the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```meta```|Meta fields.\n|```template```|The theme file to use to display the object.\n|```alt_text```|Alternative text to display when attachment is not displayed.\n|```caption```|The attachment caption.\n|```description```|The attachment description.\n|```post```|The ID for the associated post of the attachment.\n\n\nMultiple different ways to do this. The way I illustrate here is:\n\nSet the ```Content-Type``` to the image file type. \nSet ```Content-Disposition``` to ```form-data;filename=\"YOUR-FILENAME.FILE_TYPE\"\nSet the binary to the file you wish to upload."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Media item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let mediaId = pm.environment.get(\"mediaId\");",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"media id is correct\", () => {",
+									"    pm.expect(response.id).to.be.equal(mediaId);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "9d6a976c-3924-4725-bdf9-77d3eefdef9c"
+							}
+						}
+					],
+					"id": "00bb9fc7-e2c3-4377-b26f-ead3fc4f3c13",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/media/{{mediaId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"media",
+								"{{mediaId}}"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Media item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let mediaId = pm.environment.get(\"mediaId\");",
+									"let slug = pm.environment.get(\"slug\");",
+									"let caption = pm.environment.get(\"caption\");",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"media id is correct\", () => {",
+									"    pm.expect(response.id).to.be.equal(mediaId);",
+									"});",
+									"",
+									"pm.test(\"media caption is updated\", () => {",
+									"    pm.expect(response.caption.raw).to.be.equal(caption);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "c24ad45c-bc13-4dc7-b59b-dd10f25d4c09"
+							}
+						}
+					],
+					"id": "66c1be46-f508-4ed8-bd89-6782e6fd591a",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/media/{{mediaId}}?caption={{caption}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"media",
+								"{{mediaId}}"
+							],
+							"query": [
+								{
+									"key": "caption",
+									"value": "{{caption}}"
+								}
+							]
+						},
+						"description": "|||\n|:--|:--\n|```id```|Unique identifier for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```title```|The title for the object.\n|```author```|The ID for the author of the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```meta```|Meta fields.\n|```template```|The theme file to use to display the object.\n|```alt_text```|Alternative text to display when attachment is not displayed.\n|```caption```|The attachment caption.\n|```description```|The attachment description.\n|```post```|The ID for the associated post of the attachment."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Media item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let mediaId = pm.environment.get(\"mediaId\");",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Deleted set as true\",() => {",
+									"    pm.expect(response.deleted).to.be.equal('true');",
+									"});",
+									"",
+									"pm.test(\"correct media id is deleted\", () => {",
+									"    pm.expect(response.id).to.be.equal(mediaId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "91b967f4-9699-478c-86b2-a41944cbac53"
+							}
+						}
+					],
+					"id": "baf7720f-c15f-4269-8f72-29e1d985144e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "image/jpeg",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/media/{{mediaId}}?force=1",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"media",
+								"{{mediaId}}"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "1"
+								}
+							]
+						},
+						"description": "|||\n|:--|:--\n|```id```|Unique identifier for the object.\n|```force```|Whether to bypass trash and force deletion."
+					},
+					"response": []
+				}
+			],
+			"id": "c3226a46-7a7f-4d70-924f-caec7f75db15",
+			"description": "|||\n|:---|:---\n|```date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, as GMT.<br/>Context: **view, edit**\n|```guid```<br/>object<br/>The globally unique identifier for the object.<br/>Read only<br/>Context: **view, edit**\n|```id```<br/>integer|Unique identifier for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```link```<br/>string,uri|URL to the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```modified```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, in the site's timezone.<br/>Read only<br/>Context: **view, edit**\n|```modified_gmt```<br/>string,<b/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, as GMT.<br/>Read only<br/>Context: **view, edit**\n|```slug```</br>string|An alphanumeric identifier for the object unique to its type.<br/>Context: **view, edit, embed**\n|```status```<br/>string|A named status for the object.<br/>Context: **view, edit**<br/>One of: **publish, future, draft, pending, private**\n|```type```<br/>string|Type of Post for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```permalink_template```<br/>string|Permalink template for the object.<br/>Read only<br/>Context: **edit**\n|```generated_slug```<br/>string|Slug automatically generated from the object title.<br/>Read only<br/>Context: **edit**\n|```title```<br/>object|The title for the object.<br/>Context: **view, edit, embed**\n|```author```<br/>integer|The ID for the author of the object.<br/>Context: **view, edit, embed**\n|```comment_status```</br>string|Whether or not comments are open on the object.<br/>Context: **view, edit**<br/>One of: **open, closed**\n|```ping_status```<br/>string|Whether or not the object can be pinged.<br/>Context: **view, edit**<br/>One of: **open, closed**\n|```meta```<br/>object|Meta fields.<br/>Context: **view, edit**\n|```template```<br/>string|The theme file to use to display the object.<br/>Context: **view, edit**\n|```alt_text```<br/>string|Alternative text to display when attachment is not displayed.<br/>Context: **view, edit, embed**\n|```caption```<br/>object|The attachment caption.<br/>Context: **view, edit, embed**\n|```description```<br/>object|The attachment description.<br/>Context: **view, edit**\n|```media_type```<br/>string|Attachment type.<br/>Read only<br/>Context: **view, edit, embed**<br/>One of: **image, file**\n|```mime_type```<br/>string|The attachment MIME type.<br/>Read only<br/>Context: **view, edit, embed**\n|```media_details```<br/>object|Details about the media file, specific to its type.<br/>Read only<br/>Context: **view, edit, embed**\n|```post```<br/>integer|The ID for the associated post of the attachment.<br/>Context: **view, edit**\n|```source_url```<br/>string, uri|URL to the original attachment file.<br/>Read only<br/>Context: **view, edit, embed**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "831b64be-122d-45c7-bdd1-018eeb3b28a1"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "2c3ceed5-0971-4adf-a12f-b251dce18342"
+					}
+				}
+			]
+		},
+		{
+			"name": "Pages",
+			"item": [
+				{
+					"name": "List Pages",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var pagesNum = parseInt(pm.environment.get(\"pagesNum\"));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of  pages\", () => {",
+									"    let actualNum = pm.response.json().length;",
+									"    pm.expect(actualNum).to.equal(pagesNum);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "d05bd988-7801-4b18-8acc-aa183ad02dad"
+							}
+						}
+					],
+					"id": "dfad0508-bbd6-45bf-a824-59d84f45b25c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/pages",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"pages"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|\tScope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```after```|Limit response to posts published after a given ISO8601 compliant date.\n|```author```|Limit result set to posts assigned to specific authors.\n|```author_exclude```|Ensure result set excludes posts assigned to specific authors.\n|```efore```|Limit response to posts published before a given ISO8601 compliant date.\n|```exclude```|Ensure result set excludes specific IDs.\ninclude\tLimit result set to specific IDs.\n|```menu_order```|Limit result set to posts with a specific menu_order value.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default: **date**<br/>One of: **author, date, id, include, modified, parent, relevance, slug, include_slugs, title, menu_order**\n|```parent```|Limit result set to items with particular parent IDs.\n|```parent_exclude```|Limit result set to all items except those of a particular parent ID.\n|```slug```|Limit result set to posts with one or more specific slugs.\n|```status```|Limit result set to posts assigned one or more statuses.<br/>Default: **publish**"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let content = pm.environment.get('content');",
+									"pm.environment.set(\"pageId\", response.id);",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(pm.response.json().title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Excerpt is correct\", () => {",
+									"    pm.expect(pm.response.json().excerpt.raw).to.equal(excerpt);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(pm.response.json().content.raw).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "26c7e6f5-6362-4730-8c7f-b1e7a6f13b1c"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"title\", \"Test WAPI Page Title\");",
+									"pm.environment.set(\"content\", \"Test WAPI Page Content\");",
+									"pm.environment.set(\"excerpt\", \"Test WAPI Page Excerpt\");"
+								],
+								"type": "text/javascript",
+								"id": "d41cec5d-c4d2-42ed-8caf-07b36eb71acb"
+							}
+						}
+					],
+					"id": "560fca98-1b39-4798-8f9f-752799bf5b91",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/pages?content={{content}}&title={{title}}&excerpt={{excerpt}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"pages"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "title",
+									"value": "{{title}}"
+								},
+								{
+									"key": "excerpt",
+									"value": "{{excerpt}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```parent```|The ID for the parent of the object.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```author```|The ID for the author of the object.\n|```excerpt```|The excerpt for the object.\n|```featured_media```|The ID of the featured media for the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```menu_order```|The order of the object in relation to other object of its type.\n|```meta```|Meta fields.\n|```template```|The theme file to use to display the object."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let content = pm.environment.get('content');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let pageId = pm.environment.get(\"pageId\");",
+									"",
+									"pm.test(\"Page is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(pageId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.rendered).to.equal(title);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "8a033b80-ec94-44ff-9f73-05085babca2b"
+							}
+						}
+					],
+					"id": "e37eef78-c67d-4973-9e7f-0f4ce11fdaec",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/pages/{{pageId}}\n",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"pages",
+								"{{pageId}}\n"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```password```|The password for the post if it is password protected."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let title = pm.environment.get('title');",
+									"let excerpt = pm.environment.get('excerpt');",
+									"let content = pm.environment.get('content');",
+									"let pageId = pm.environment.get(\"pageId\");",
+									"",
+									"pm.test(\"Page is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(pageId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Excerpt is correct\", () => {",
+									"    pm.expect(response.excerpt.raw).to.equal(excerpt);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(response.content.raw).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "c88df62b-67a7-4983-9722-59fb7f467981"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"title\", \"Test WAPI Page Title Updated\");",
+									"pm.environment.set(\"content\", \"Test WAPI Page Content Updated\");",
+									"pm.environment.set(\"excerpt\", \"Test WAPI Page Excerpt Updated\");"
+								],
+								"type": "text/javascript",
+								"id": "6eac2a12-1151-4849-b129-6b0d881925fa"
+							}
+						}
+					],
+					"id": "39d1d7d1-1d87-47ca-ad51-87567332e93f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/pages/{{pageId}}?title={{title}}&content={{content}}&excerpt={{excerpt}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"pages",
+								"{{pageId}}"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "{{title}}"
+								},
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "excerpt",
+									"value": "{{excerpt}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```parent```|The ID for the parent of the object.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```author```|The ID for the author of the object.\n|```excerpt```|The excerpt for the object.\n|```featured_media```|The ID of the featured media for the object.\n|```comment_status```|Whether or not comments are open on the object.<br/>One of: **open, closed**\n|```ping_status```|Whether or not the object can be pinged.<br/>One of: **open, closed**\n|```menu_order```|The order of the object in relation to other object of its type.\n|```meta```|Meta fields.\n|```template```|The theme file to use to display the object."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let pageId = pm.environment.get(\"pageId\");",
+									"",
+									"",
+									"pm.test(\"Page is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(pageId);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "e4a24ec5-fb4a-42a7-a918-f145e3e1aa92"
+							}
+						}
+					],
+					"id": "f7b4852c-b741-46aa-8374-58b13900eb2e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/pages/{{pageId}}\n",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"pages",
+								"{{pageId}}\n"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```id```|Unique identifier for the object.\n|```force```|Whether to bypass trash and force deletion.\n"
+					},
+					"response": []
+				}
+			],
+			"id": "653f8c86-d4d7-4605-86fc-1ace662639ed",
+			"description": "|||\n|:---|:---\n|```date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, as GMT.<br/>Context: **view, edit**\n|```guid```<br/>object|The globally unique identifier for the object.<br/>Read only<br/>Context: **view, edit**\n|```id```<br/>integer|Unique identifier for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```link```<br/>string,uri|URL to the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```modified```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))\nThe date the object was last modified, in the site's timezone.<br/>Read only<br/>Context: **view, edit**\n|```modified_gmt```<br/>string,<br/>\ndatetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, as GMT.<br/>Read only<br/>Context: **view, edit**\n|```slug```<br/>string|An alphanumeric identifier for the object unique to its type.<br/>Context: **view, edit, embed**\n|```status```<br/>string|A named status for the object.<br/>Context: **view, edit**<br/>One of: **publish, future, draft, pending, private**\n|```type```<br/>string|Type of Post for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```password```<br/>string|A password to protect access to the content and excerpt.<br/>Context: **edit**\n|```permalink_template```<br/>string|Permalink template for the object.<br/>Read only<br/>Context: **edit**\n|```generated_slug```<br/>string|Slug automatically generated from the object title.<br/>Read only<br/>Context: **edit**\n|```parent```<br/>integer|The ID for the parent of the object.<br/>Context: **view, edit**\n|```title``<br/>object|The title for the object.<br/>Context: **view, edit, embed**\n|```content```<br/>object|The content for the object.<br/>Context: **view, edit**\n|```author```<br/>integer|The ID for the author of the object.<br/>Context: **view, edit, embed**\n|```excerpt```<br/>object|The excerpt for the object.<br/>Context: **view, edit, embed**\n|```featured_media```<br/>integer|The ID of the featured media for the object.<br/>Context: **view, edit, embed**\n|```comment_status```<br/>string|Whether or not comments are open on the object.<br/>Context: **view, edit**<br/>One of: **open, closed**\n|```ping_status```<br/>string|Whether or not the object can be pinged.<br/>Context: **view, edit**<br/>One of: **open, closed**\n|```menu_order```<br/>integer|The order of the object in relation to other object of its type.<br/>Context: **view, edit**\n|```meta```<br/>object|Meta fields.<br/>Context: **view, edit**\n|```template```<br/>string|The theme file to use to display the object.<br/>Context: **view, edit**\n\n\n\n",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "182ae36e-2aad-41ce-9a28-0b177fb43083"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "58586ec1-8668-4d54-925f-3d3ce9752db3"
+					}
+				}
+			]
+		},
+		{
+			"name": "Themes",
+			"item": [
+				{
+					"name": "List Themes ",
+					"id": "05cdc70d-5953-4452-8b41-93089508e5ba",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/themes?status={{themeStatus}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"themes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "{{themeStatus}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```status```|Limit result set to themes assigned one or more statuses.<br/>Required: **1**\n|```context```|Scope under which the request is made; determines fields present in response.\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string."
+					},
+					"response": []
+				}
+			],
+			"id": "25b8a9cf-dceb-4e02-8ff9-d876d973aa19",
+			"description": "|||\n|:--|:--\n|```theme_supports```<br/>array|Features supported by this theme.<br/>Read only\n\n\nhttps://developer.wordpress.org/cli/commands/theme/status/\n",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "10ec8f8e-1f04-4813-8c3d-5a54d43af764"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "c2570731-c3e8-4c2c-9230-394b7085bdb5"
+					}
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "List Tags",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var tagsNum = pm.environment.get('tagNum');",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of tags\", () => {",
+									"    let actualNum = pm.response.length;",
+									"    pm.expect(actualNum).to.equal(tagsNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "e17fd471-363a-4ab5-b8f0-179777beaa9f"
+							}
+						}
+					],
+					"id": "5ab128a9-9ac3-4127-98fb-7c3a99aac3eb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/tags",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"tags"
+							]
+						},
+						"description": "|||\n|:--|:---\n|```context```|Scope under which the request is made;determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **asc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by term attribute.<br/>Default: **name**<br/>One of: **id, include, name, slug, include_slugs, term_group, description, count**\n|```hide_empty```|Whether to hide terms not assigned to any posts.\n|```post```|Limit result set to terms assigned to a specific post.\n|```slug```|Limit result set to terms with one or more specific slugs.\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Tag ",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('test-tag', 'test');"
+								],
+								"type": "text/javascript",
+								"id": "98aa230e-8bae-45eb-9c3c-99dc4c48babe"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let tagName = pm.environment.get('test-tag');",
+									"pm.environment.set('tagId', response.id);",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Tag added\",() => {",
+									"    pm.expect(response.name).to.be.equal(tagName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "721292c4-cc2a-4774-9084-8d2d45ba5f57"
+							}
+						}
+					],
+					"id": "e4055543-f9a1-46e0-83f1-aaf756a89b33",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/tags?name={{test-tag}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{test-tag}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```description```|HTML description of the term.\n|```name```|HTML title for the term.<br/>Required: **1**\n|```slug```|An alphanumeric identifier for the term unique to its type.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let tagId = parseInt(pm.environment.get(\"tagId\"));",
+									"let tagName = pm.environment.get(\"test-tag\");",
+									"",
+									"pm.test(\"Tag is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(tagId);",
+									"});",
+									"",
+									"pm.test(\"Name is correct\", () => {",
+									"    pm.expect(response.name).to.equal(tagName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "eff7f48a-53ed-44d2-b442-5b823de42660"
+							}
+						}
+					],
+					"id": "20e6a9a7-b26d-4846-a50c-50d199320a17",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/tags/{{tagId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"tags",
+								"{{tagId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```context```|Scope under which the request is made; |```determines```|fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Tag ",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('test-tag', 'updated-name');"
+								],
+								"type": "text/javascript",
+								"id": "6d0d9999-5aba-4282-8092-a9d602f6db2a"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let tagName = pm.environment.get('test-tag');",
+									"let tagId = parseInt(pm.environment.get(\"tagId\"));",
+									"",
+									"pm.test(\"Tag is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(tagId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.name).to.equal(tagName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "8e3f4356-c769-4874-9f50-76d112866b04"
+							}
+						}
+					],
+					"id": "4be2f6f4-c6f4-43c4-b8ad-eaee3201978f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/tags/{{tagId}}?name={{test-tag}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"tags",
+								"{{tagId}}"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{test-tag}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```description```|HTML description of the term.\n|```name```|HTML title for the term.\n|```slug```|An alphanumeric identifier for the term unique to its type.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let tagId = parseInt(pm.environment.get(\"tagId\"));",
+									"",
+									"",
+									"pm.test(\"Tag is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.previous.id).to.equal(tagId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "282d9c2c-1376-4d73-85b8-794d3ff5ca85"
+							}
+						}
+					],
+					"id": "992f02d7-1886-456f-944a-8b1e8330a951",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/tags/{{tagId}}?force=1",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"tags",
+								"{{tagId}}"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "1"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```force```|Required to be true, as terms do not support trashing.\n"
+					},
+					"response": []
+				}
+			],
+			"id": "ca9ef8fd-750c-47f2-8bb9-7cc0c284ca1a",
+			"description": "|||\n|:--|:--\n|```id```<br/>integer|Unique identifier for the term.<br/>Read only<br/>Context: **view, embed, edit**\n|```count```<br/>integer|Number of published posts for the term.<br/>Read only<br/>Context: **view, edit**\n|```description```<br/>string|HTML description of the term.<br/>Context: **view, edit**\n|```link```<br/>string,uri|URL of the term.<br/>Read only<br/>Context: **view, embed, edit**\n|```name```<br/>string|HTML title for the term.<br/>Context: **view, embed, edit**\n|```slug```<br/>string|An alphanumeric identifier for the term unique to its type.<br/>Context: **view, embed, edit**\n|```taxonomy```<br/>string|Type attribution for the term.<br/>Read only<br/>Context: **view, embed, edit**<br/>One of: **category, post_tag, nav_menu, link_category, post_format**\n|```meta```<br/>object|Meta fields.<br/>Context: **view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "0c6d89d3-1174-4aa0-9295-0edb07400701"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "befa3b11-d6ea-4b42-b95b-1eec350acd31"
+					}
+				}
+			]
+		},
+		{
+			"name": "Types",
+			"item": [
+				{
+					"name": "List Types",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "8b630da5-edfd-43ed-a25a-05e303c6daa1"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"id": "f0240109-49b5-4828-b48c-cf4428d3dfba"
+							}
+						}
+					],
+					"id": "be5ee821-91e8-4ece-a91b-748e8a3c1b77",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/types",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"types"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "e50383a1-e456-429e-9bba-6827221194af"
+							}
+						}
+					],
+					"id": "6073f4e3-30e8-4a20-a1c6-cc68f63f541e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/types/{{typeId}}?type={{type}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"types",
+								"{{typeId}}"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "{{type}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```type```|An alphanumeric identifier for the post type.<br/> Required:**1**\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				}
+			],
+			"id": "476d462d-9692-441e-956c-f7b0534292b4",
+			"description": "|||\n|:--|:---\n|```capabilities```<br/>object|All capabilities used by the post type.<br/>Read only<br/>Context: **edit**\n|```description```<br/>string|A human-readable description of the post type.<br/>Read only<br/>Context: **view, edit**\n|```hierarchical``<br/>boolean|Whether or not the post type should have children.<br/>Read only<br/>Context: **view, edit**\n|```viewable```<br/>boolean|Whether or not the post type can be viewed.<br/>Read only<br/>Context: **edit**\n|```labels```object|Human-readable labels for the post type for various contexts.<br/>Read only<br/>Context: **edit**\n|```name```<br/>string|The title for the post type.<br/>Read only<br/>Context: **view, edit, embed**\n|```slug```<br/>string|An alphanumeric identifier for the post type.<br/>Read only<br/>Context: **view, edit, embed**\n|```supports```<br/>object|All features, supported by the post type.<br/>Read only<br/>Context: **edit**\n|```taxonomies```<br/>array|Taxonomies associated with post type.<br/>Read only<br/>Context: **view, edit**\n|```rest_base```string|REST base route for the post type.<br/>Read only<br/>Context: **view, edit, embed**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "c84c731d-a3e0-4fba-a920-7a1941568e59"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "72f26986-03e3-4bc5-8ffd-64ac8ef267eb"
+					}
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var catgoriesNum = pm.environment.get('catgoriesNum');",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of catgories\", () => {",
+									"    let actualNum = pm.response.length;",
+									"    pm.expect(actualNum).to.equal(catgoriesNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "c50844aa-06fb-47e1-a780-c16abaf219fe"
+							}
+						}
+					],
+					"id": "9f21e09f-b170-4952-80a4-4a083481278e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/categories",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"categories"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```context```|Scope under which the request is made;determines fields present in response.\n<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **asc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by term attribute.<br/>Default: **name**<br/>One of: **id, include, name, slug, include_slugs, term_group, description, count**\n|```hide_empty```|Whether to hide terms not assigned to any posts.\n|```parent```|Limit result set to terms assigned to a specific parent.\n|```post```|Limit result set to terms assigned to a specific post.\n|```slug```|Limit result set to terms with one or more specific slugs."
+					},
+					"response": []
+				},
+				{
+					"name": "Create a category",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('categoriesName','Category TEST');"
+								],
+								"type": "text/javascript",
+								"id": "abb86245-041d-4d2b-a33f-6e17321b2777"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let categoriesName = pm.environment.get('categoriesName');",
+									"pm.environment.set('categoriesId', response.id);",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Category added\",() => {",
+									"    pm.expect(response.name).to.be.equal(categoriesName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "ebaf0133-f2cf-4161-8f90-2b8f2daf4d57"
+							}
+						}
+					],
+					"id": "e43c6788-ae9e-40d8-b30e-8b089c3ec4af",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/categories?name={{categoriesName}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{categoriesName}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```description```|HTML description of the term.\n|```name```|HTML title for the term.<br/>Required: **1**\n|```slug```|An alphanumeric identifier for the term unique to its type.\n|```parent```|The parent term ID.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Category ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let categoriesId = parseInt(pm.environment.get(\"categoriesId\"));",
+									"let categoriesName = pm.environment.get(\"categoriesName\");",
+									"",
+									"pm.test(\"Category is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(categoriesId);",
+									"});",
+									"",
+									"pm.test(\"Name is correct\", () => {",
+									"    pm.expect(response.name).to.equal(categoriesName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "a8a69f54-7eca-4e1e-8bf7-8beb1968959e"
+							}
+						}
+					],
+					"id": "4535228a-8846-44d6-beb9-8fe1c5d70fdf",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/categories/{{categoriesId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"categories",
+								"{{categoriesId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Category",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('categoriesName', 'Categories UPDATE');"
+								],
+								"type": "text/javascript",
+								"id": "4dd182b0-0c7b-44a4-aade-d0576cf372e8"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let categoriesName = pm.environment.get('categoriesName');",
+									"let categoriesId = parseInt(pm.environment.get(\"categoriesId\"));",
+									"",
+									"pm.test(\"Category is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(categoriesId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.name).to.equal(categoriesName);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "61cadcb6-7d40-430c-9392-2bfe08305e14"
+							}
+						}
+					],
+					"id": "fdced36e-1e07-4abd-9644-59da21050a9d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/categories/{{categoriesId}}?name={{categoriesName}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"categories",
+								"{{categoriesId}}"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{categoriesName}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```description```|HTML description of the term.\n|```name```|HTML title for the term.\n|```slug```|An alphanumeric identifier for the term unique to its type.\n|```parent```|The parent term ID.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let categoriesId = parseInt(pm.environment.get(\"categoriesId\"));",
+									"",
+									"",
+									"pm.test(\"Category is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.previous.id).to.equal(categoriesId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "ee2a5d61-06fb-4ea1-b118-2ecba83104c7"
+							}
+						}
+					],
+					"id": "621c612c-3957-4c8b-82a9-ab5068d0b2b1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/categories/{{categoriesId}}?force=1",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"categories",
+								"{{categoriesId}}"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "1"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the term.\n|```force```|Required to be true, as terms do not support trashing.\n"
+					},
+					"response": []
+				}
+			],
+			"id": "939e9f49-0799-43d6-bff2-6406b7eed021",
+			"description": "|||\n|:---|:---\n|```id```<br/>integer|Unique identifier for the term.<br/>Read only<br/>Context: **view, embed, edit**\n|```count```<br/>integer|Number of published posts for the term.<br/>Read only<br/>Context: **view, edit**\n|```description```<br/>string|HTML description of the term.<br/>Context: **view, edit**\n|```link```<br/>string,uri<br/>|URL of the term.<br/>Read only<br/>Context: **view, embed, edit**\n|```name```<br/>string|HTML title for the term.<br/>Context: **view, embed, edit**\n|```slug```<br/>string|An alphanumeric identifier for the term unique to its type.<br/>Context: **view, embed, edit**\n|```taxonomy```<br/>string|Type attribution for the term.<br/>Read only<br/>Context: **view, embed, edit**<br/>One of: **category, post_tag, nav_menu, link_category, post_format**\n|```parent```<br/>integer|The parent term ID.<br/>Context: **view, edit**\n|```meta``<br/>object|Meta fields.<br/>Context: **view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "875efef0-1e64-466e-9938-c65d6e2a5a14"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "1551fb98-183f-4cd4-b069-87de51ad7d44"
+					}
+				}
+			]
+		},
+		{
+			"name": "Taxonomies",
+			"item": [
+				{
+					"name": "Retrieve a Taxonomy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var taxonomyNum = parseInt(pm.environment.get('taxonomyNum'));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of tags\", () => {",
+									"    let actualNum = Object.keys(pm.response.json()).length;",
+									"    pm.expect(actualNum).to.equal(taxonomyNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "eeb4c33b-730d-450d-8d46-153098d443c1"
+							}
+						}
+					],
+					"id": "7fa4a46b-4fd6-47cd-a383-243bcd7905d3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/taxonomies",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"taxonomies"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```type```|Limit results to taxonomies associated with a specific post type.\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Taxonomy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let taxonomy = pm.environment.get(\"taxonomy\");",
+									"",
+									"pm.test(\"Taxonomy is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "ac0ff276-6a3e-48d4-ad14-46d961c1eec4"
+							}
+						}
+					],
+					"id": "b9e631f4-9367-4d19-b171-954165512096",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{newToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/taxonomies/{{taxonomy}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"taxonomies",
+								"{{taxonomy}}"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```taxonomy```|An alphanumeric identifier for the taxonomy.\n|```context```|Scope under which the request is made; determines fields present in response.<bvr/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				}
+			],
+			"id": "1375f12a-c152-473c-b021-f99830a159b8",
+			"description": "|||\n|:---|:---\n|```capabilities```<br/>object|All capabilities used by the taxonomy.<br/>Read only<br/>Context: **edit**\n|```description```</br>string|A human-readable description of the taxonomy.<br/>Read only<br/>Context: **view, edit**\n|```hierarchical```<br/>boolean|Whether or not the taxonomy should have children.<br/>Read only<br/>Context: **view, edit**\n|```labels```<br/>object|Human-readable labels for the taxonomy for various contexts.<br/>Read only<br/>Context: **edit**\n|```name```<br/>string|The title for the taxonomy.<br/>Read only<br/>Context: **view, edit, embed**\n|```slug```<br/>string|An alphanumeric identifier for the taxonomy.<br/>Read only<br/>Context: **view, edit, embed**\n|```show_cloud```<br/>boolean|Whether or not the term cloud should be displayed.<br/>Read only<br/>Context: **edit**\n|```types```<br/>array|Types associated with the taxonomy.<br/>Read only<br/>Context: **view, edit**\n|```rest_base```<br/>string|REST base route for the taxonomy.<br/>Read only<br/>Context: **view, edit, embed**\n|```visibility```<br/>object|The visibility settings for the taxonomy.<br/>Read only<br/>Context: **edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "21520a79-f860-4423-b481-5cda37f8233d"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "dc2b1bed-8ea1-4a4f-ac9c-80ca6ac710d2"
+					}
+				}
+			]
+		},
+		{
+			"name": "Statuses",
+			"item": [
+				{
+					"name": "Retrieve a Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var taxonomyNum = parseInt(pm.environment.get('taxonomyNum'));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of tags\", () => {",
+									"    let actualNum = Object.keys(pm.response.json()).length;",
+									"    pm.expect(actualNum).to.equal(taxonomyNum);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "a9eaf562-ea5a-4d12-8b61-0fc1d08efebb"
+							}
+						}
+					],
+					"id": "40add234-81c7-43bb-8ab8-316338e8d7ab",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/statuses",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"statuses"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, ed**"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let taxonomy = pm.environment.get(\"taxonomy\");",
+									"",
+									"pm.test(\"Taxonomy is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "7c633f7b-6f4f-4958-b94c-0e5864913bab"
+							}
+						}
+					],
+					"id": "9951edee-9196-436e-ab53-d259fd28e9f5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/statuses/{{statusId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"statuses",
+								"{{statusId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```status```|An alphanumeric identifier for the status.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				}
+			],
+			"id": "6880c2a7-0197-4f15-b94f-7d7bf8e43c07",
+			"description": "|||\n|:---|:---\n|||\n|```name```<br/>string|The title for the status.<br/>Read only<br/>Context: **embed, view, edit**\n|```private```<br/>boolean|Whether posts with this status should be private.<br/>Read only<br/>Context: **edit**\n|```protected```<br/>boolean|Whether posts with this status should be protected.<br/>Read only<br/>Context: **edit**\n|```public```<br/>boolean|Whether posts of this status should be shown in the front end of the site.<br/>Read only<br/>Context: **view, edit**\n|```queryable```<br/>boolean|Whether posts with this status should be publicly-queryable.<br/>Read only<br/>Context: **view, edit**\n|```show_in_list```<br/>boolean|Whether to include posts in the edit listing for their post type.<br/>Read only<br/>Context: **edit**\n|```slug```<br/>string|An alphanumeric identifier for the status.<br/>Read only<br/>Context: **embed, view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "4c755c3f-737c-49cb-a512-90e86ecead3d"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "ef41ecef-202e-4c85-af7d-00d6050e0555"
+					}
+				}
+			]
+		},
+		{
+			"name": "Search Results",
+			"item": [
+				{
+					"name": "List Search-results",
+					"id": "e8757c0c-c1de-42e7-ae6f-8d2a7c6152ed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/search",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"search"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```type```|Limit results to items of an object type.<br/>Default: **post**<br/>One of: **post**\n|```subtype```|Limit results to items of one or more object subtypes.<br/>Default: **any**"
+					},
+					"response": []
+				}
+			],
+			"id": "4c52b82e-400e-4216-934c-219e4f716f6c",
+			"description": "|||\n|:---|:---\n|```id```<br/>integer|Unique identifier for the object.<br/>Read only<br/>Context: **view, embed**\n|```title```<br/>string|The title for the object.<br/>Read only<br/>Context: **view, embed**\n|```url```<br/>string,uri|URL to the object.<br/>Read only<br/>Context: **view, embed**\n|```type```<br/>string|Object type.<br/>Read only<br/>Context: **view, embed**<br/>One of: **post**\n|```subtype```<br/>string|Object subtype.<br/>Read only<br/>Context: **view, embed**<br/>One of: **post, page**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "1fa0697e-b449-4080-8156-0a06d86d3c95"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "d7e16fe0-96b0-4f9c-9fd4-9bd8643cb863"
+					}
+				}
+			]
+		},
+		{
+			"name": "Blocks",
+			"item": [
+				{
+					"name": "List wp_blocks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var blocksNum = parseInt(pm.environment.get('blocksNum'));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of blocks\", () => {",
+									"    let actualNum = pm.response.json().length;",
+									"    pm.expect(actualNum).to.equal(blocksNum);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "1bd94969-3203-447f-961a-fe1c221d103f"
+							}
+						}
+					],
+					"id": "2d31c805-5f2b-4ba3-91b1-44046f798640",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks"
+							]
+						},
+						"description": "| | | \n| :--- | :---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```after```|Limit response to posts published after a given ISO8601 compliant date.\n|```before```|Limit response to posts published before a given ISO8601 compliant date.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default: **date**<br/>One of: **author, date, id, include, modified, parent, relevance, slug, include_slugs, title**\n|```slug```|Limit result set to posts with one or more specific slugs.\n|```status```|Limit result set to posts assigned one or more statuses.<br/>Default: **publish**"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a wp_block ",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('content', 'BLOCKS CONTENT');",
+									"pm.environment.set('title', 'BLOCKS TITLE');"
+								],
+								"type": "text/javascript",
+								"id": "01c90c71-a2ee-4bf5-b85f-97608ba80a38"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let content = pm.environment.get('content');",
+									"let title = pm.environment.get('title');",
+									"pm.environment.set('blockId', response.id);",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Block content added\",() => {",
+									"    pm.expect(response.content.raw).to.be.equal(content);",
+									"});",
+									"",
+									"pm.test(\"Block title added\",() => {",
+									"    pm.expect(response.title.raw).to.be.equal(title);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "71698756-f5e6-4f77-b338-25a9ed5a3485"
+							}
+						}
+					],
+					"id": "1de19757-db49-40c3-a618-00f5fa48b7ff",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks?title={{title}}&content={{content}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "{{title}}"
+								},
+								{
+									"key": "content",
+									"value": "{{content}}"
+								}
+							]
+						},
+						"description": "| | |\n| :--- | :---\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```template```|The theme file to use to display the object."
+					},
+					"response": []
+				},
+				{
+					"name": "Updating a wp_block",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('content', 'BLOCK CONTENT UPDATE');",
+									"pm.environment.set('title', 'BLOCK TITLE UPDATE');",
+									""
+								],
+								"type": "text/javascript",
+								"id": "503de279-0266-4075-8786-35572282596c"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let content = pm.environment.get('content');",
+									"let title = pm.environment.get('title');",
+									"let blockId = parseInt(pm.environment.get(\"blockId\"));",
+									"",
+									"pm.test(\"Block is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(blockId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(response.content.raw).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "4a6df838-40de-4a96-b656-3fec4d1346f9"
+							}
+						}
+					],
+					"id": "3e1b7bef-f72e-4820-bd81-9ad5ec8efaa5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks/{{blockId}}?content={{content}}&title={{title}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks",
+								"{{blockId}}"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "title",
+									"value": "{{title}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```template```|The theme file to use to display the object."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a wp_block",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let blockId = parseInt(pm.environment.get(\"blockId\"));",
+									"let content = pm.environment.get(\"content\");",
+									"let title = pm.environment.get(\"title\");",
+									"",
+									"pm.test(\"Block is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(blockId);",
+									"});",
+									"",
+									"pm.test(\"Title is correct\", () => {",
+									"    pm.expect(response.title.raw).to.equal(title);",
+									"});",
+									"",
+									"pm.test(\"Content is correct\", () => {",
+									"    pm.expect(response.content.raw).to.equal(content);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "1f3de640-558f-4a6d-a8cb-a739c5fb43e3"
+							}
+						}
+					],
+					"id": "c74417a9-0f0b-4b58-ad91-681c433977c3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks/{{blockId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks",
+								"{{blockId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```password```|The password for the post if it is password protected."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a wp_block",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let blockId = parseInt(pm.environment.get(\"blockId\"));",
+									"",
+									"",
+									"pm.test(\"Tag is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.previous.id).to.equal(blockId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "52bd7e2e-2075-4700-97a4-b43b64e198dc"
+							}
+						}
+					],
+					"id": "7e5e1da2-b139-4866-9e36-4043380663fd",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks/{{blockId}}?force=1",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks",
+								"{{blockId}}"
+							],
+							"query": [
+								{
+									"key": "force",
+									"value": "1"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```force```|Whether to bypass trash and force deletion."
+					},
+					"response": []
+				}
+			],
+			"id": "77f5990b-b541-4a21-b1d3-dee96055d62a",
+			"description": "|||\n|:---|:---\n|```author```<br/>integer|The ID for the author of the object.<br/>Context: **view, edit, embed**\n|```date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, as GMT.<br/>Context: **view, edit**\n|```guid```<br/>object|The globally unique identifier for the object.<br/>Read only<br/>Context: **view, edit**\n|```id```<br/>integer|Unique identifier for the object.<br/>Context: **view, edit, embed**\n|```modified```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, in the site's timezone.<br/>Context: **view, edit**\n|```modified_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, as GMT.<br/>Context: **view, edit**\n|```parent```<br/>integer|The ID for the parent of the object.<br/>Context: **view, edit, embed**\n|```slug```<br/>string|An alphanumeric identifier for the object unique to its type.<br/>Context: **view, edit, embed**\n|```title```<br/>object|The title for the object.<br/>Context: **view, edit, embed**\n|```content```<br/>object|The content for the object.<br/>Context: **view, edit**\n|```preview_link```<br/>string,uri|Preview link for the post.<br/>Read only<br/>Context: **edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test.skip"
+						],
+						"id": "a1b3b408-1ad9-4f44-ab97-7f7445e1074c"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "78b210f1-17cf-451b-98dd-3033ce68d434"
+					}
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "List Comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var commentNum = parseInt(pm.environment.get('commentNum'));",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has proper amount of blocks\", () => {",
+									"    let actualNum = pm.response.json().length;",
+									"    pm.expect(actualNum).to.equal(commentNum);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "be6d09b9-9117-408b-a9ad-ed19ab00ad3e"
+							}
+						}
+					],
+					"id": "23c06c4c-9e1b-4c28-bf5b-d0665df98b28",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/comments\n\n",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"comments\n\n"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```after```|Limit response to comments published after a given ISO8601 compliant date.\n|```author```|Limit result set to comments assigned to specific user IDs. Requires authorization.\n|```author_exclude```|Ensure result set excludes comments assigned to specific user IDs. Requires authorization.\n|```author_email```|Limit result set to that from specific author email. Requires authorization.\n|```before```|\tLimit response to comments published before a given ISO8601 compliant date.\n|```exclude```|\tEnsure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default:** date_gmt**<br/>One of: **date, date_gmt, id, include, post, parent, type**\n|```parent```|Limit result set to comments of specific parent IDs.\n|```parent_exclude```|Ensure result set excludes specific parent IDs.\n|```post```|Limit result set to comments assigned to specific post IDs.\n|```status```|Limit result set to comments assigned a specific status. Requires authorization.<br/>Default: **approve**\n|```type```|Limit result set to comments assigned a specific type. Requires authorization.<br/>Default: **comment**\n|```password```|The password for the post if it is password protected."
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Comment ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let content = pm.environment.get('content');",
+									"let author = pm.environment.get('author');",
+									"let author_email = pm.environment.get('email');",
+									"let post = parseInt(pm.environment.get('commentPostId'));",
+									"",
+									"pm.environment.set('commentId', response.id);",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Proper post selected\",() => {",
+									"    pm.expect(response.post).to.be.equal(post);",
+									"});",
+									"",
+									"pm.test(\"Comment content added\",() => {",
+									"    pm.expect(response.content.raw).to.be.equal(content);",
+									"});",
+									"",
+									"pm.test(\"Comment author_name added\",() => {",
+									"    pm.expect(response.author_name).to.be.equal(author);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Comment author_email added\",() => {",
+									"    pm.expect(response.author_email).to.be.equal(author_email);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "0558490e-cd7a-4561-9e8f-e2f6ff8faa15"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('content',\"This is a test comment\");",
+									"pm.environment.set('author',\"WAPI\");",
+									"pm.environment.set('email',\"test@test.com\");",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "0cc650fb-5521-4a7e-9d15-e77eb251d47e"
+							}
+						}
+					],
+					"id": "1473c315-a485-4e3f-a07c-bd5d59574099",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/comments?post={{commentPostId}}&content={{content}}&author_name={{author}}&author_email={{email}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "post",
+									"value": "{{commentPostId}}"
+								},
+								{
+									"key": "content",
+									"value": "{{content}}"
+								},
+								{
+									"key": "author_name",
+									"value": "{{author}}"
+								},
+								{
+									"key": "author_email",
+									"value": "{{email}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```post```|The ID of the associated post object.<br/>Required:**1**\n|```content```|The content for the object.<br/>Required:**1**\n|```author```|The ID of the user object, if author was a user.\n|```author_email```|Email address for the object author.\n|```author_ip```|IP address for the object author.\n|```author_name```|Display name for the object author.\n|```author_url```|URL for the object author.\n|```author_user_agent```|User agent for the object author.\n|```content```|The content for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```parent```|The ID for the parent of the object.\n|```status```|State of the object.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Comment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"id": "4fd9ed2c-dc6b-428c-8b15-8bb6ba32e79d"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let commentId = parseInt(pm.environment.get(\"commentId\"));",
+									"let content = pm.environment.get('content');",
+									"let author = pm.environment.get('author');",
+									"let post = parseInt(pm.environment.get(\"commentPostId\"));",
+									"",
+									"pm.test(\"Comment is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(commentId);",
+									"});",
+									"",
+									"pm.test(\"Proper post returned\",() => {",
+									"    pm.expect(response.post).to.be.equal(post);",
+									"});",
+									"",
+									"pm.test(\"Comment author_name returned\",() => {",
+									"    pm.expect(response.author_name).to.be.equal(author);",
+									"});",
+									"",
+									"pm.test(\"Comment content is there\",() => {",
+									"    pm.expect(response.content.rendered).to.exist;",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "a8623899-10b4-4dc6-802f-cafe66695b77"
+							}
+						}
+					],
+					"id": "58b25a97-49a1-4b73-a278-5334c16ad949",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/comments/{{commentId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"comments",
+								"{{commentId}}"
+							]
+						},
+						"description": "**Authentication Required**\n\n\n|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present inresponse.<br/>Default:**view**<br/>One of: **view, embed, edit**\n|```password```|The password for the parent post of the comment (if the post is password protected)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let content = pm.environment.get('content');",
+									"let commentId = parseInt(pm.environment.get(\"commentId\"));",
+									"",
+									"pm.test(\" is retrieved\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.id).to.equal(commentId);",
+									"});",
+									"",
+									"pm.test(\"Content is updated\", () => {",
+									"    pm.expect(response.content.raw).to.equal(content);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"id": "dc8f9ef0-1f3f-4c14-ac86-c547751b480c"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('content', 'comment UPDATE');"
+								],
+								"type": "text/javascript",
+								"id": "1fa9fb71-e77a-48d2-b2e3-f906b6c50978"
+							}
+						}
+					],
+					"id": "82cc014d-e2d4-49bb-84ae-14a89636ac4d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}} /wp-json/wp/v2/comments/{{commentId}}?content={{content}}",
+							"host": [
+								"{{site}} "
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"comments",
+								"{{commentId}}"
+							],
+							"query": [
+								{
+									"key": "content",
+									"value": "{{content}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```author```|The ID of the user object, if author was a user.\n|```author_email```|Email address for the object author.\n|```author_ip```|IP address for the object author.\n|```author_name```|Display name for the object author.\n|```author_url```|URL for the object author.\n|```author_user_agent```|User agent for the object author.\n|```content```|The content for the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```parent```|The ID for the parent of the object.\n|```post```|The ID of the associated post object.\n|```status```|State of the object.\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"let commentId = parseInt(pm.environment.get(\"commentId\"));",
+									"",
+									"",
+									"pm.test(\"Category is deleted\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Proper id is returned\", () => {",
+									"    pm.expect(response.previous.id).to.equal(commentId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"id": "4df068e6-a6d1-48dc-9d09-62409a956e62"
+							}
+						}
+					],
+					"id": "98ca51fb-a408-4175-8390-c785a6156cfa",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/comments/{{commentId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"comments",
+								"{{commentId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the object.\n|```force```|Whether to bypass trash and force deletion.\n|```password```|The password for the parent post of the comment (if the post is password protected)."
+					},
+					"response": []
+				}
+			],
+			"id": "5f7cc832-916d-4c31-81c0-b537c316c6a7",
+			"description": "|||\n|:---|:---\n|```id```<br/>integer|Unique identifier for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```author```<br/>integer|The ID of the user object, if author was a user.<br/>Context: **view, edit, embed**\n|```author_email```<br/>string,email|Email address for the object author.<br/>Context: **edit**\n|```author_ip```<br/>string,ip|IP address for the object author.<br/>Context: **edit**\n|```author_name```<br/>string|Display name for the object author.<br/>Context: **view, edit, embed**\n|```author_url```<br/>string,uri|URL for the object author.<br/>Context: **view, edit, embed**\n|```author_user_agent```<br/>string|User agent for the object author.<br/>Context: **edit**\n|```content```<br/>object|The content for the object.<br/>Context: **view, edit, embed**\n|```date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, as GMT.<br/>Context: **view, edit**\n|```link```<br/>string,uri|URL to the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```parent```<br/>integer|The ID for the parent of the object.<br/>Context: **view, edit, embed**\n|```post```<br/>integer|The ID of the associated post object.<br/>Context: **view, edit**\n|```status```<br/>string|State of the object.<br/>Context: **view, edit**\n|```type```<br/>string|Type of Comment for the object.<br/>Read only<br/>Context: **view, edit, embed**\n|```author_avatar_urls```<br/>object|Avatar URLs for the object author.<br/>Read only<br/>Context: **view, edit, embed**\n|```meta```|object\tMeta fields.<br/>Context: **view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "836629a4-e510-4152-9c94-23904d31d5e1"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "5ae06f59-bc5f-429b-9c4c-1e6013bccc08"
+					}
+				}
+			]
+		},
+		{
+			"name": "Block Revisions",
+			"item": [
+				{
+					"name": "Retrieve a wp_block-revision",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "5af48321-92c8-483d-9e34-ec52aedf13d4"
+							}
+						}
+					],
+					"id": "731b48d4-f871-4b40-8737-3177aaa6cc6c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks/{{blockId}}/autosaves?parent={{postId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks",
+								"{{blockId}}",
+								"autosaves"
+							],
+							"query": [
+								{
+									"key": "parent",
+									"value": "{{postId}}"
+								}
+							]
+						},
+						"description": "|||\n|:---|:---\n|```parent```|The ID for the parent of the object.<br/>Request:**1**\n|```context```|Scope under which the request is made; |```determines```|fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a wp_block-revision",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "9530be2d-6584-4bbc-aac2-1aa734e57d97"
+							}
+						}
+					],
+					"id": "256427a0-3efe-46f3-a10e-693f01dcade7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/{{blockId}}/autosaves",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"{{blockId}}",
+								"autosaves"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```parent```|The ID for the parent of the object.\n|```date```|The date the object was published, in the site's timezone.\n|```date_gmt```|The date the object was published, as GMT.\n|```slug```|An alphanumeric identifier for the object unique to its type.\n|```status```|A named status for the object.<br/>One of: **publish, future, draft, pending, private**\n|```password```|A password to protect access to the content and excerpt.\n|```title```|The title for the object.\n|```content```|The content for the object.\n|```template```|The theme file to use to display the object."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a wp_block-revision with parent",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "83d0fecb-0d5a-4f09-869e-e2906763f0b1"
+							}
+						}
+					],
+					"id": "dc9ffa91-5184-4d8a-bec1-18e23edc915f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/blocks/{{parentId}}/autosaves/{{blockId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"blocks",
+								"{{parentId}}",
+								"autosaves",
+								"{{blockId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```parent```|The ID for the parent of the object.\n|```id```|The ID for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				}
+			],
+			"id": "5822ba3c-f650-4c36-bd35-c9f3527d1e51",
+			"description": "|||\n|:---|:---\n|```author```<br/>integer|The ID for the author of the object.<br/>Context: **view, edit, embed**\n|```date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|\nThe date the object was published, as GMT.<br/>Context: **view, edit**\n|```guid```<br/>object|The globally unique identifier for the object.<br/>Read only<br/>Context: **view, edit**\n|```id```<br/>integer|Unique identifier for the object.<br/>Context: **view, edit, embed**\n|```modified```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, in the site's timezone.<br/>Context: **view, edit**\n|```modified_gmt```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, as GMT.<br/>Context: **view, edit**\n|```parent```<br/>integer|The ID for the parent of the object.<br/>Context: **view, edit, embed**\n|```slug```<br/>string|An alphanumeric identifier for the object unique to its type.<br/>Context: **view, edit, embed**\n|```title```<br/>object|The title for the object.<br/>Context: **view, edit, embed**\n|```content```<br/>object|The content for the object.<br/>Context: **view, edit**\n|```preview_link```<br/>string,uri|Preview link for the post.<br/>Read only<br/>Context: **edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test.skip"
+						],
+						"id": "01b80a5a-1200-4cb6-91b3-0640a6e5bf08"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "0163ad7b-5264-4d05-a6a5-033049f2bfed"
+					}
+				}
+			]
+		},
+		{
+			"name": "Post Revisions",
+			"item": [
+				{
+					"name": "List Post Revisions",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "c7ceb20e-25e7-43d5-be96-9866a66c793c"
+							}
+						}
+					],
+					"id": "a0540f5d-d969-425d-a4dd-158f8684c4e8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp/v2/posts/{{postId}}/revisions\n\n",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp",
+								"v2",
+								"posts",
+								"{{postId}}",
+								"revisions\n\n"
+							]
+						},
+						"description": "| | |\n| :-- | :--\n|```parent``` |The ID for the parent of the object.\n|```context```|\tScope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.\n|```search```|Limit results to those matching a string.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```\t| Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **desc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default: **date**<br/>One of: **date, id, include, relevance, slug, include_slugs, title**"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Post-Revision",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "c46073d6-329e-4379-8009-ccff31347c91"
+							}
+						}
+					],
+					"id": "5bb356e5-9a41-45e3-aead-eff326246c53",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp/v2/posts/{{parentId}}/revisions/{{revisionId}}\n\n",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp",
+								"v2",
+								"posts",
+								"{{parentId}}",
+								"revisions",
+								"{{revisionId}}\n\n"
+							]
+						},
+						"description": "| | |\n|:--|:--\n|```parent```|The ID for the parent of the object.\n|```id```|Unique identifier for the object.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Post-revision",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "f4ceebfe-4a69-4678-8482-7af9227e749b"
+							}
+						}
+					],
+					"id": "e7aec8e6-0a1b-4e53-b0ba-d29358ee23ed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp/v2/posts/{{parentId}}/revisions/{{revisionsId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp",
+								"v2",
+								"posts",
+								"{{parentId}}",
+								"revisions",
+								"{{revisionsId}}"
+							]
+						},
+						"description": "| | |\n| :--- | :-- \n|```parent```|The ID for the parent of the object.\n|```id```|Unique identifier for the object.\n|```force```|Required to be true, as revisions do not support trashing."
+					},
+					"response": []
+				}
+			],
+			"id": "207ac540-9b0f-48ff-98fc-715b98ceb65c",
+			"description": "#Schema\nThe schema defines all the fields that exist for a post-revision object.\n\n| | |\n| :-- | :--\n|```author```<br/>integer |\tThe ID for the author of the object.</br>Context: **view, edit, embed**\n|```date```<br/>string,datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, in the site's timezone.<br/>Context: **view, edit, embed**\n|```date_gmt```<br/>string,datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was published, as GMT.<br/>Context: **view, edit**\n|```guid```<br/>object|The globally unique identifier for the object.<br/>Read only<br/>Context: **view, edit**\n|```id```<br/>integer\t|Unique identifier for the object.<br/>Context: **view, edit, embed**\n|```modified```<br/>string,datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, in the site's timezone.<br/>Context: **view, edit**\n|```modified_gmt```<br/>string,datetime ([details](https://core.trac.wordpress.org/ticket/41032))|The date the object was last modified, as GMT.<br/>Context: **view, edit**\n|```parent```<br/>integer|The ID for the parent of the object.<br/>Context: **view, edit, embed**\n|```slug```<br/>string|\tAn alphanumeric identifier for the object unique to its type.<br/>Context: **view, edit, embed**\n|```title```<br/>object\t| The title for the object.<br/>Context: **view, edit, embed**\n|```content```<br/>object |The content for the object.<br/>Context: **view, edit**\n|```excerpt```<br/>object\t| The excerpt for the object.<br/>Context: **view, edit, embed**\n",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test.skip"
+						],
+						"id": "3fc753da-f9d3-46a9-8dee-1056b564ff00"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "5ce67be9-6fd3-4fa1-be4c-ee9683d5b0bb"
+					}
+				}
+			]
+		},
+		{
+			"name": "Block Renderer",
+			"item": [
+				{
+					"name": "Retrieve a Rendered-block",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "4e2e213b-e064-40f4-b7e9-8fbcbfc6f004"
+							}
+						}
+					],
+					"id": "79840824-9eae-411a-8c7b-ade278ddae23",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/block-renderer/{{blockName}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"block-renderer",
+								"{{blockName}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```name```|Unique registered name for the block.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **edit**\n|```attributes```|Attributes for core/tag-cloud block\n|```post_id```|ID of the post context."
+					},
+					"response": []
+				}
+			],
+			"id": "d59c5d4d-b66b-4946-8181-dcba387001d7",
+			"description": "|||\n|:---|:---\n|```rendered```<br/>string|The rendered block.<br/>Context: **edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test.skip"
+						],
+						"id": "c0d9377c-99a3-467a-8b89-f654bd3a4d1e"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "79dbf17e-c313-4ffd-9e07-0b5dd5357572"
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users ",
+					"id": "4f3b67b3-74f5-44d1-800f-60cc8845650b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users"
+							]
+						},
+						"description": "|||\n|:--|:--\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**\n|```page```|Current page of the collection.<br/>Default: **1**\n|```per_page```|Maximum number of items to be returned in result set.<br/>Default: **10**\n|```search```|Limit results to those matching a string.\n|```exclude```|Ensure result set excludes specific IDs.\n|```include```|Limit result set to specific IDs.\n|```offset```|Offset the result set by a specific number of items.\n|```order```|Order sort attribute ascending or descending.<br/>Default: **asc**<br/>One of: **asc, desc**\n|```orderby```|Sort collection by object attribute.<br/>Default: **name**<br/>One of: **id, include, name, registered_date, slug, include_slugs, email, url**\n|```slug```|Limit result set to users with one or more specific slugs.\n|```roles```|Limit result set to users matching at least one specific role provided. Accepts csv list or single role.\n|```who```|Limit result set to users who are considered authors.<br/>One of: **authors**"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "95893b56-7254-4d57-add8-73832521f06e"
+							}
+						}
+					],
+					"id": "44bdef88-255b-4550-b601-c73f2a9bb2ba",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```username```|Login name for the user.<br/>Required: **1**\n|```name```|Display name for the user.\n|```first_name```|First name for the user.\n|```last_name```|Last name for the user.\n|```email```|The email address for the user.<br/>Required: **1**\n|```url```|URL of the user.\n|```description```|Description of the user.\n|```locale```|Locale for the user.<br/>One of: **en_US**\n|```nickname```|The nickname for the user.\n|```slug```|An alphanumeric identifier for the user.\n|```roles```|Roles assigned to the user.\n|```password```|Password for the user (never included).<br/>Required: **1**\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "dcf50530-2dd5-4070-9efc-8d2909082c08"
+							}
+						}
+					],
+					"id": "5c4e4337-3fb5-4886-b94a-faef40913b65",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/{{userId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the user.\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "e9a911fc-1376-4b3d-b5bb-b9059947faed"
+							}
+						}
+					],
+					"id": "33e2ecf8-d70e-4cfb-b11d-0505cd6e9170",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/{{userId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the user.\n|```username```|Login name for the user.\n|```name```|Display name for the user.\n|```first_name```|First name for the user.\n|```last_name```|Last name for the user.\n|```email```|The email address for the user.\n|```url```|URL of the user.\n|```description```|Description of the user.\n|```locale```|Locale for the user.<br/>One of: **en_US**\n|```nickname```|The nickname for the user.\n|```slug```|An alphanumeric identifier for the user.\n|```roles```|Roles assigned to the user.\n|```password```|Password for the user (never included).\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "15816000-69ea-455a-9558-d1ef0428ea4b"
+							}
+						}
+					],
+					"id": "14eae086-8d87-4bb2-a2cc-1d8519d7df03",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/{{userId}}",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```id```|Unique identifier for the user.\n|```force```|Required to be true, as users do not support trashing.\n|```reassign```|Reassign the deleted user's posts and links to this user ID.<br/>Required: **1**"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Me",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "734a4487-32e9-46bf-a304-5f0205d504bd"
+							}
+						}
+					],
+					"id": "a3a074fa-bcb9-42af-bb39-ecae5e69c994",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/me",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"me"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```context```|Scope under which the request is made; determines fields present in response.<br/>Default: **view**<br/>One of: **view, embed, edit**"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Me",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "faec78a9-6417-4c1a-80ef-f1ecfc0c28f3"
+							}
+						}
+					],
+					"id": "16215b39-9ef4-4a19-b96e-09df1bbd225c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/me",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"me"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```username```|Login name for the user.\n|```name```|Display name for the user.\n|```first_name```|First name for the user.\n|```last_name```|Last name for the user.\n|```email```|The email address for the user.\n|```url```|URL of the user.\n|```description```|Description of the user.\n|```locale```|Locale for the user.<br/>One of: **en_US**\n|```nickname```|The nickname for the user.\n|```slug```|An alphanumeric identifier for the user.\n|```roles```|Roles assigned to the user.\n|```password```|Password for the user (never included).\n|```meta```|Meta fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Me",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "24c938d4-59eb-48c3-8175-73d5e013080c"
+							}
+						}
+					],
+					"id": "703fda03-fd4d-4235-bacc-032d8ff76b6a",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/users/me",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"users",
+								"me"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```force```|Required to be true, as users do not support trashing.\n|```reassign```|Reassign the deleted user's posts and links to this user ID.<br/>Required: **1**"
+					},
+					"response": []
+				}
+			],
+			"id": "eec6387b-ef04-4794-8943-250eb9a38752",
+			"description": "|||\n|:---|:---\n|```id```<br/>integer|Unique identifier for the user.<br/>Read only<br/>Context: **embed, view, edit**\n|```username```<br/>string|Login name for the user.<br/>Context: **edit**\n|```name```<br/>string|Display name for the user.<br/>Context: **embed, view, edit**\n|```first_name```<br/>string|First name for the user.<br/>Context: **edit**\n|```last_name```<br/>string|Last name for the user.<br/>Context:  **edit**\n|```email```<br/>string,email|The email address for the user.<br/>Context: **edit**\n|```url```<br/>string,uri|URL of the user<br/>Context: **embed, view, edit**\n|```description```|<br/>string|Description of the user.<br/>Context: **embed, view, edit**\n|```link```<br/>string,uri | Author URL of the user.<br/>Read only<br/>Context: **embed, view, edit**\n|```locale```<br/>string|Locale for the user.<br/>Context:  **edit**<br/>One of: **en_US**\n|```nickname```<br/>string|The nickname for the user.<br/>Context: **edit**\n|```slug```<br/>string|An alphanumeric identifier for the user.<br/>Context: **embed, view, edit**\n|```registered_date```<br/>string,<br/>datetime ([details](https://core.trac.wordpress.org/ticket/41032))|Registration date for the user.<br/>Read only<br/>Context: **edit**\n|```roles```<br/>array|Roles assigned to the user.<br/>Context: **edit**\n|```password```<br/>string|Password for the user (never included)\n|```capabilities```<br/>object|All capabilities assigned to the user.<br/>Read only<br/>Context: **edit**\n|```extra_capabilities```<br/>object|Any extra capabilities assigned to the user.<br/>Read only<br>Context: **edit**\n|```avatar_urls```<br/>object|Avatar URLs for the user.<br/>Read only<br/>Context: **embed, view, edit**\n|```meta```<br/>object|Meta fields.<br/>Context: **view, edit**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test.skip"
+						],
+						"id": "f30b1ea9-2038-42ca-93d5-0fe01de476ca"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "417cbbca-6846-47a6-9e73-87b715ac5ddd"
+					}
+				}
+			]
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "Retrieve Site Settings ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"response is ok\",() => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response must be valid and have a body\", () => {",
+									"     pm.response.to.be.ok; ",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; ",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"id": "8e0758f9-4ebe-413e-88ca-cf3a6a6a6268"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"id": "6602cee8-aefc-440a-92d8-ebcf63e516c8"
+							}
+						}
+					],
+					"id": "9a472f60-0fd6-4044-962f-7324cf7b5bb8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "mZbu ThPI bbpv RR4L Asfv v3Ay",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wapi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/settings",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"settings"
+							]
+						},
+						"description": "There are no arguments for this endpoint.\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Site Settings ",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.skip.test;"
+								],
+								"type": "text/javascript",
+								"id": "87d49712-9387-46ee-a873-bac9de35955b"
+							}
+						}
+					],
+					"id": "f63779d1-88fc-4fa8-9852-db8ef8c184e9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{site}}/wp-json/wp/v2/settings",
+							"host": [
+								"{{site}}"
+							],
+							"path": [
+								"wp-json",
+								"wp",
+								"v2",
+								"settings"
+							]
+						},
+						"description": "|||\n|:---|:---\n|```title```|Site title.\n|```description```|Site tagline.\n|```timezone```|A city in the same timezone as you.\n|```date_format```|A date format for all date strings.\n|```time_format```|A time format for all time strings.\n|```start_of_week```|A day number of the week that the week should start on.\n|```language```|WordPress locale code.\n|```use_smilies```|Convert emoticons like :-) and :-P to graphics on display.\n|```default_category```|Default post category.\n|```default_post_format```|Default post format.\n|```posts_per_page```|Blog pages show at most.\n|```default_ping_status```|Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.<br/>One of: **open, closed**\n|```default_comment_status```|Allow people to post comments on new articles.<br/>One of: **open, closed**"
+					},
+					"response": []
+				}
+			],
+			"id": "23d830e2-0890-4ceb-9e4d-d6c74777cff0",
+			"description": "|||\n|:---|:---\n|```title```<br/>string|Site title.\n|```description```<br/>string|Site tagline.\n|```timezone```<br/>string|A city in the same timezone as you.\n|```date_format```<br/>string|\tA date format for all date strings.\n|```time_format```<br/>string|A time format for all time strings.\n|```start_of_week```<br/>integer|A day number of the week that the week should start on.\n|```language```<br/>string|WordPress locale code.\n|```use_smilies```<br/>boolean|Convert emoticons like :-) and :-P to graphics on display.\n|```default_category```<br/>integer|Default post category.\n|```default_post_format```<br/>string|Default post format.\n|```posts_per_page```<br/>integer | Blog pages show at most.\n|```default_ping_status```<br/>string|Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.<br/>One of: **open, closed**\n|```default_comment_status```<br/>string|Allow people to post comments on new articles.<br/>One of: **open, closed**",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "7ae0df68-f4f0-428a-b90e-ffba65523b9c"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "380a8e0e-872a-4768-83cc-2f1cbe80d9a1"
+					}
+				}
+			]
+		},
+		{
+			"name": "Routes",
+			"id": "24d7cd74-c270-4994-afb0-eac0e16b02d9",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{site}}/wp-json",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						"wp-json"
+					]
+				},
+				"description": "Returns all the available API routes and endpoints for a Wordpress instance."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "38c94aed-6571-464c-8f82-4d433a9170e4"
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "85c6529a-f64a-4777-9d88-9389d20905bd"
+			}
+		}
+	]
+}

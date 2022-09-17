@@ -1,9 +1,16 @@
-id = 1a937418-09c8-4ff5-a747-ca1b7c15c142
+id = ab84473a-5fed-4d69-87a7-405c31a07448
 
 [relations]
 
 [relations.collections]
 rootDirectory = postman/collections
+files[] = {"id":"23232594-6fad70f9-1b9d-499d-9787-641118c1556a","path":"Business Management API.json","metaData":{}}
+files[] = {"id":"23232594-9e2cc7c8-66ae-4a9e-bfb2-d3eea747e5e4","path":"Pardot API v5.json","metaData":{}}
+files[] = {"id":"23232594-62d922cb-c795-49dc-ad3f-3667feb359ef","path":"Postman API.json","metaData":{}}
+files[] = {"id":"23232594-386e5b8a-6ac9-45e8-9153-aa31227be091","path":"Shopify.json","metaData":{}}
+files[] = {"id":"23232594-6f9e2eaa-833b-4c84-9f87-fe3d8f90c48e","path":"Stripe API.json","metaData":{}}
+files[] = {"id":"23232594-c92fe10a-d753-4236-8a9d-2acb4c979a12","path":"Twitter API v2.json","metaData":{}}
+files[] = {"id":"23232594-a261d5c3-82f9-4c86-a6eb-934b3959a54b","path":"Wordpress API v2.json","metaData":{}}
 
 [relations.collections.metaData]
 
