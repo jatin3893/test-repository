@@ -14,7 +14,7 @@
 					"name": "Get Account Metrics",
 					"item": [
 						{
-							"name": "Get WABA",
+							"name": "Get",
 							"id": "0442813f-4bbb-4c7c-a9b2-689f892830f8",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
