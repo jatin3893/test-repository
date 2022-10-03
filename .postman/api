@@ -1,4 +1,4 @@
-id = ab84473a-5fed-4d69-87a7-405c31a07448
+id = e292c5d6-27a4-4716-a597-31c744b9096b
 
 [relations]
 
@@ -13,6 +13,7 @@ files[] = {"id":"23232594-3506319d-e49c-48cc-b680-db9705ebad84","path":"New Coll
 
 [relations.apiDefinition]
 rootDirectory = postman/schemas
+files[] = {"path":"index.yaml","metaData":{}}
 files[] = {"path":"index1.json","metaData":{}}
 files[] = {"path":"index2.json","metaData":{}}
 files[] = {"path":"index4.json","metaData":{}}
