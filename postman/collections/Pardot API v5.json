@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "9e2cc7c8-66ae-4a9e-bfb2-d3eea747e5e4",
+		"_postman_id": "d146909f-996e-46f4-9709-e942d3592699",
 		"name": "Pardot API v5",
 		"description": "The Pardot V5 API collection contains requests for the following Salesforce Pardot APIs:\n\n<table>\n   <tr>\n      <td> V5 Synchronous API</td>\n   </tr>\n</table>\n\n**⚠️ Disclaimers:**\n- This collection is provided as-is. It's not officially supported by Salesforce or covered by SLAs.\n- API documentation is not provided with the collection. Please refer to the [official documentation](https://developer.salesforce.com/docs/marketing/pardot/overview).\n\nℹ️ Report issues and ask questions [on GitHub](https://github.com/pardot/postman-pardot-apis).\n\n## Get started\n\nFollow [this documentation](https://github.com/pardot/postman-pardot-apis) to get started with the collection.\n\n## Authentication\n\nThe collection uses the [Web Server OAuth flow](https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_web_server_flow.htm&type=5). Add your connected app's client ID and secret as a collection variable.  Next go to the collection->Auth & request a token.\n\nLearn more about setting up a connected app and authentication in the [developer documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/getting-started.html#authentication). \n\n## Variables Reference\n\nThe collection relies on the following variables:\n\n| Variable | Description |\n| --- | --- |\n| `access_token`| Set automatically when you authenticate.|\n| `oauth_domain` | The base login URL for authentication. Either:<br/>- `https://test.salesforce.com` for sandboxes or scratch orgs<br/>- `https://login.salesforce.com` for production, Trailhead Playground and Developer Edition orgs<br/>- your custom My Domain base URL. |\n| `domain` | The base login URL for authentication. Either:<br/>- 'https://pi.demo.pardot.com' for Pardot Sandboxes and Developer Environments<br/>- 'https://pi.pardot.com' for Pardot Production instances |\n|`grant_type`| Used only if you change to the username-password flow. Don't change the initial value.| \n| `sf_username ` | Your Salesforce username. |\n| `sf_password ` | Your Salesforce password. |\n| `clientId ` | Connected App Consumer Key. |\n| `clientSecret ` | Connected App Consumer Secret. |\n| `pardot_business_unit ` | The Pardot Business Unit ID of your specific Pardot instance |",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_uid": "23232594-9e2cc7c8-66ae-4a9e-bfb2-d3eea747e5e4"
+		"_uid": "1138048-d146909f-996e-46f4-9709-e942d3592699"
 	},
 	"item": [
 		{
@@ -12,7 +12,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "968599cc-7df6-40b8-a674-2f8a1d21c94b",
+					"id": "95476642-19d4-4ecd-a7cb-4641b00f46e3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -69,7 +69,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "92da51fc-fb4c-4572-93ab-4f084a26b265",
+					"id": "7a7d8525-cce5-44bd-b72e-7abd92b10c76",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -210,7 +210,7 @@
 				},
 				{
 					"name": "Connect Salesforce Campaign",
-					"id": "dd589a58-65ba-484b-b2dd-5e5197237e82",
+					"id": "7b058c06-0553-4cf4-bb7a-e0f175670616",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -258,7 +258,7 @@
 					"response": []
 				}
 			],
-			"id": "6e5b980d-0673-474d-9c83-1f108c2a2214",
+			"id": "b9521274-1681-4f41-ba4a-919597f1abe8",
 			"description": "A Pardot campaign tracks the first interaction that a person has with your online marketing materials. Associate your assets to a Pardot campaign to organize and track your marketing efforts. Learn more about Pardot campaigns in [Salesforce Help](https://help.salesforce.com/s/articleView?id=sf.pardot_campaigns_parent.htm&type=5).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/campaign-v5.html#campaign-resources)"
 		},
 		{
@@ -266,7 +266,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "68134a3b-0b8b-4ab3-8894-406fd5089dff",
+					"id": "159369df-fba5-4104-82df-d0e7a1f4115d",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -323,7 +323,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "03fe07a7-02ec-450b-a39c-c1a731836410",
+					"id": "d1e0bfd3-18bb-45c6-84bb-1ec449796d58",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -377,7 +377,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "a31c2d99-9a1a-406d-8061-ae29c7ae8198",
+					"id": "22860b5d-2c48-4cb3-b616-c31a998903fb",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -438,7 +438,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "a7239786-2ec7-4bba-80be-6d45fb032f58",
+					"id": "39bd3a6c-4d26-4a9d-bf40-bca70c6eadc3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -572,7 +572,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "23e95dfa-72e3-418a-92c1-0b9c677bc31f",
+					"id": "eb00d474-b691-4ca9-ab4d-bcbd9ec2ebca",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -611,7 +611,7 @@
 					"response": []
 				}
 			],
-			"id": "18318569-b557-43b8-bad5-ecee7570518d",
+			"id": "0ea22e59-c5ed-4ee0-a985-1532d3be986d",
 			"description": "Use custom fields to capture and track more data about your prospects. You can use custom fields in forms and sync the Pardot fields with Salesforce fields. Learn more about Pardot fields in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_forms_prospect_fields.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/custom-field-v5.html)",
 			"event": [
 				{
@@ -621,7 +621,7 @@
 						"exec": [
 							""
 						],
-						"id": "dfc99b4d-7de4-4df1-9707-70a3cf52ea70"
+						"id": "9ea44d68-fed0-4ae9-9f45-e7364df1c975"
 					}
 				},
 				{
@@ -631,7 +631,7 @@
 						"exec": [
 							""
 						],
-						"id": "c1b5ff80-5cc6-4a5f-935e-d9f0f0753585"
+						"id": "aa6f5ab3-4602-49eb-9497-ea58e108e1b9"
 					}
 				}
 			]
@@ -641,7 +641,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "57497409-b8e4-44f8-9060-7b86188bc7f0",
+					"id": "b033bbfd-c5cf-4f95-ba75-dfcdbfb36dd3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -699,7 +699,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "7db27ce9-0976-4bbf-bc3e-c6d3e8a9b249",
+					"id": "c903ff05-9da7-41a5-b3d9-2deb842b11b9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -786,7 +786,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "be2c76b3-bb15-452b-a1a7-f9dc3d5fbe97",
+					"id": "ece9b4af-ddc3-45f2-b055-4cb2639751d7",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -841,7 +841,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "75340397-fb24-48f8-9524-acf4630d56ec",
+					"id": "fb2a02eb-1dab-423a-ac49-093bad59af2c",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -889,7 +889,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "91e1a9fa-c7b0-44c2-938f-50f8178f5805",
+					"id": "6f62e00f-b63c-4ce6-b91e-9c21d2eb3e20",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -927,7 +927,7 @@
 					"response": []
 				}
 			],
-			"id": "685d83da-b943-4c54-a9d4-20c8f82e00eb",
+			"id": "9f8e514d-6565-4968-821b-3aae985fb65b",
 			"description": "Track links on your website or third-party site with Pardot’s custom redirects. For example, you can track a link on your Twitter page or a banner ad on a third-party site. When a user clicks a link, a corresponding activity is created on their profile. Learn about custom redirects in [Salefsorce Help](https://help.salesforce.com/articleView?id=sf.pardot_content_custom_redirects.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/custom-redirect-v5.html)",
 			"event": [
 				{
@@ -937,7 +937,7 @@
 						"exec": [
 							""
 						],
-						"id": "b1dcd368-fa0e-43f2-9a8d-b3b2d9177c54"
+						"id": "4d358a5a-e1b9-41cc-ad2b-7c2dc84676fd"
 					}
 				},
 				{
@@ -947,7 +947,7 @@
 						"exec": [
 							""
 						],
-						"id": "9bd0a7c6-4bf3-4a27-8ca6-a4555c43f57a"
+						"id": "c3b77a24-2209-4c06-8017-e010477e0935"
 					}
 				}
 			]
@@ -957,7 +957,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "17691dd3-c609-483f-8f66-cd4a5204b998",
+					"id": "2ec3bc4a-015a-40c8-9f35-a7987690b3c5",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1014,7 +1014,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "e39a2971-78dc-4a1a-b33f-0b24cd57ffea",
+					"id": "7ce8227f-18a1-462b-992e-2f976fad03b0",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1106,14 +1106,14 @@
 					"response": []
 				}
 			],
-			"id": "47130bc0-5dd5-4a73-a352-906e7d391b11"
+			"id": "7efd159c-6584-4439-ba2c-9191d1977733"
 		},
 		{
 			"name": "External Activities",
 			"item": [
 				{
 					"name": "Ingestion",
-					"id": "5f4a53a6-ae61-4230-9bcf-84959d612e50",
+					"id": "5c0a55e0-a110-4f6f-8b42-73b8cb2da460",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1152,7 +1152,7 @@
 					"response": []
 				}
 			],
-			"id": "c8e8f499-4556-4d1c-8685-968d84cdcdfd",
+			"id": "f44ac842-3e18-409f-b5ee-017e9cf61a15",
 			"description": "External activity helps marketers use all of their prospect engagement to drive their marketing automations. There are two main components to external activity: an extension, which represents an integration, and the activity type, which is the type of engagement that can be submitted. For example, an extension can be an integration with Zoom, and the activity type can be registered for call and attended call.\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/external-activities-v5.html)"
 		},
 		{
@@ -1160,7 +1160,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "3530583a-0275-4d16-978f-76da2ae31e15",
+					"id": "1b701100-bff2-490c-bd95-fe447c09acbe",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1217,7 +1217,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "3e9f960a-c6ce-4c9c-937c-5953b15954f2",
+					"id": "0ba3a3b2-0b8c-49b3-b95b-b6e32c91c933",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1389,14 +1389,14 @@
 					"response": []
 				}
 			],
-			"id": "3676907d-bc62-4643-9ca4-e0308833de72"
+			"id": "8ac757d1-7817-4e68-b67c-337aa3d5c8ee"
 		},
 		{
 			"name": "Email Template",
 			"item": [
 				{
 					"name": "Read",
-					"id": "154ab20e-59e0-47b9-aa95-896cd5371cbb",
+					"id": "7c92f123-2f7b-4064-9e5f-35cc3d595dc3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1453,7 +1453,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "27b2dadd-25d7-4f78-abaa-b09762915529",
+					"id": "e58b8905-c6d5-490a-b6dd-d061747fa91f",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1612,7 +1612,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "d8b4a75d-0f62-478d-8fd6-105c717b14dd",
+					"id": "20ec0480-b49b-46a1-9e92-b1e8073152d0",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1666,7 +1666,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "224735a6-f9fb-4ce0-a201-b6aad94eae10",
+					"id": "0b17d72c-507b-48dc-ac98-138362d3953b",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1713,7 +1713,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "1142f93c-5d53-401f-837c-8ef69748093a",
+					"id": "cdb068cc-3590-471a-ad65-153290b78fab",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1750,14 +1750,14 @@
 					"response": []
 				}
 			],
-			"id": "6b09991b-3b53-48b1-bb01-4330aa336cec"
+			"id": "9b65cd58-0b5c-48f4-8b7a-510a17f99653"
 		},
 		{
 			"name": "Files",
 			"item": [
 				{
 					"name": "Read",
-					"id": "cd801b56-95ab-4c2e-b398-f50c1351e360",
+					"id": "2c16f4f6-25e0-4c82-8c8f-532708c091a4",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1818,7 +1818,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "388542a6-9a88-4888-a1b2-a766d874d9b7",
+					"id": "743a83bd-7c26-4a36-83d4-c464eac0dc49",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1904,7 +1904,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "b60a9c83-3853-49fd-a46a-b898e3d9e696",
+					"id": "73c4cf6a-ed25-40d7-996b-0b6804eded7a",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1929,7 +1929,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"value": null
+									"src": []
 								},
 								{
 									"key": "input",
@@ -1964,7 +1964,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "ed46a6e5-bef8-465f-8aa2-a2657fd608f1",
+					"id": "28e72998-b8ef-4c77-9fdb-4f3c38599e31",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2025,7 +2025,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "ca14dfa7-c2a9-445b-bc3f-ac1727bffc17",
+					"id": "3f91ac48-c27a-4a95-a88d-65d2c0c96065",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2064,7 +2064,7 @@
 					"response": []
 				}
 			],
-			"id": "d5923d7b-f11f-45a8-b8ff-675dbf7a25e3",
+			"id": "3d72e22c-b5ee-4721-b087-036c5dd25b1f",
 			"description": "Upload images and other files to use in your Pardot emails, forms, and landing pages. Learn about files in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_content_files_parent.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/file-v5.html)"
 		},
 		{
@@ -2072,7 +2072,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "a4622c0a-644d-4d21-9233-a4f69cbbbb04",
+					"id": "3bd49fbf-d9c8-4188-8b22-55fd87ed01e1",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2130,7 +2130,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "33718838-d0f7-4c3f-be8b-3fffabdc9838",
+					"id": "66ce6395-b0af-4dfc-b38f-2ba172c9d2ea",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2295,7 +2295,7 @@
 					"response": []
 				}
 			],
-			"id": "27187bc5-9a04-41c4-aad7-3587f294b281",
+			"id": "46869525-b778-41a6-88f5-ada92633a5dd",
 			"description": "Organize and nest your content and marketing assets in a way that makes sense for your team. Learn about folders in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_content_folders_parent.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/folder-v5.html)"
 		},
 		{
@@ -2303,7 +2303,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "4423b29b-0e3b-4d7b-85bc-7b7532898d66",
+					"id": "31e9ba4e-41ef-4576-b1e4-4905bb824000",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2361,7 +2361,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "17ab5c22-87da-41cc-a1d5-f2144370d20c",
+					"id": "fe900481-65ee-408b-9fb7-dbcd6bc23aab",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2446,7 +2446,7 @@
 					"response": []
 				}
 			],
-			"id": "650c6d54-44a0-4289-baa5-0aa1f1671568",
+			"id": "0c184dbf-e7e2-41db-91fe-fa1f38d3be98",
 			"description": "Use forms to collect visitor information and create identified prospects. Learn more about forms in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_forms.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/form-v5.html)"
 		},
 		{
@@ -2454,7 +2454,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "51b12366-ce92-46ab-b22b-58cb2557c4b4",
+					"id": "a97e314b-b40b-4395-bb1b-392506367bcf",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2511,7 +2511,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "5d3a3d53-cfba-49f9-9f75-e84856dcdd3d",
+					"id": "b7d34229-b7a4-4d59-8200-821ed89d2162",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2664,7 +2664,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "c80368a4-dc42-45ee-aefd-a82f4fcaf835",
+					"id": "e4c54c25-ae04-43db-bebd-48083c2da167",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2718,7 +2718,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "1e71a09c-2508-4700-8917-e8f9303784d5",
+					"id": "39187192-54f8-4ee8-953a-0c1a5b526ceb",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2765,7 +2765,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "37944ed9-d3e3-44ac-9ada-f777d7f2a437",
+					"id": "dbb9eb13-aec8-4929-826e-7957a39a8338",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2802,14 +2802,14 @@
 					"response": []
 				}
 			],
-			"id": "02d6eb79-762e-481a-8cdf-7f451506650d"
+			"id": "03b44b68-00ad-466f-9d8e-624b6f90b261"
 		},
 		{
 			"name": "Form Handler Field",
 			"item": [
 				{
 					"name": "Read",
-					"id": "a3bc8bde-a0e1-4f46-9533-df80f7e05942",
+					"id": "1bd3d46c-15f4-4f49-8b1e-6540f98830ec",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2860,7 +2860,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "e0874930-2570-48b6-b129-072ceae51b89",
+					"id": "97f67ac3-30e8-4700-82a7-433693ec4c9c",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3002,7 +3002,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "3cea462c-3bc1-4ea8-8485-8f526ff3323d",
+					"id": "5ebb7611-9067-410a-8fc9-f821724002f1",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3057,7 +3057,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "3b306fec-5615-4594-b9e7-1e7f9c019fb9",
+					"id": "7f577e27-94ed-4fa2-ae60-417ce389f1be",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3104,7 +3104,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "c452b984-a706-446a-b17a-6f9843c35fd1",
+					"id": "47183d2f-00cd-42fb-83db-52c208e50fc3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3141,14 +3141,14 @@
 					"response": []
 				}
 			],
-			"id": "10e2af5c-820c-4373-b896-ae6c1feb6c86"
+			"id": "89e7ed34-eced-4288-b251-abd5f88944ca"
 		},
 		{
 			"name": "Layout Templates",
 			"item": [
 				{
 					"name": "Read",
-					"id": "075cd80e-4205-4df5-a728-43155b828f12",
+					"id": "5cd133a4-8fb4-4cd2-a829-34d348b4a898",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3205,7 +3205,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "51d623d6-d2a5-412a-831f-873cebcc7d89",
+					"id": "ce9cd868-a748-44eb-9c6a-bc6d32e2eb93",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3290,7 +3290,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "c75c43f1-b96a-40ec-a63d-00b4130ef67f",
+					"id": "5e54d396-f8a9-444b-9d2f-bd315e3eb651",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3343,7 +3343,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "4340d4d2-4680-444c-9ad3-59ef9bf04cbd",
+					"id": "3433bdef-f0d5-4ce7-a852-a9da941c978d",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3405,7 +3405,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "6c26fc37-e0d3-499a-96d2-0223acc38a45",
+					"id": "ea9c6a99-c618-416a-8950-b5f7c7caa133",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3444,7 +3444,7 @@
 					"response": []
 				}
 			],
-			"id": "87eb6ac4-0609-41d9-b653-882b9d8505fe",
+			"id": "6e238550-b89d-490c-b054-d01b7a6cc8c2",
 			"description": "Layout templates are used to format landing pages, forms, and site search results. Learn more about layout templates in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_landing_pages_create_layout.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/layout-template-v5.html)"
 		},
 		{
@@ -3452,7 +3452,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "ff8a3e09-2da8-457b-ad3b-21038bb2fd48",
+					"id": "61410daa-f139-4d5b-a09a-7939e1d5d9ad",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3509,7 +3509,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "800d5d65-892d-4d51-a6a1-55f5e7321550",
+					"id": "3f87b17f-cbdb-45b0-9ebb-87d0bd0ff2bc",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3661,14 +3661,14 @@
 					"response": []
 				}
 			],
-			"id": "cf637860-cebc-444b-83ef-cef2e45735b5"
+			"id": "7637ab6c-398c-44a8-9557-3bf2d1889c89"
 		},
 		{
 			"name": "Lifecycle Stage",
 			"item": [
 				{
 					"name": "Read",
-					"id": "937995c3-038a-4b52-90e0-a44c152338f2",
+					"id": "f724b577-5284-497f-81d4-6452b22c4416",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3725,7 +3725,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "7f023e43-f8f2-4ae7-a230-9d2ed7e9b8bc",
+					"id": "dedd3f78-78d0-48ab-afb8-a020818e6149",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3877,14 +3877,14 @@
 					"response": []
 				}
 			],
-			"id": "dac81984-e83e-4ff9-8ab6-bd130751bb3e"
+			"id": "bd25b724-7057-4978-a4c8-f37d9c777628"
 		},
 		{
 			"name": "Lists",
 			"item": [
 				{
 					"name": "Read",
-					"id": "b5fb2e58-1577-4326-8f9d-a6e419295c1d",
+					"id": "2b7de7c8-b273-4e2c-8e16-b5881a17bf45",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -3947,7 +3947,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "ea8f1091-2bc4-488b-913e-8323b689c614",
+					"id": "6acae417-a268-4fbc-af8e-46343f767135",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4088,7 +4088,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "ec6ba160-0b2a-44cc-8c12-fd1d9388ca17",
+					"id": "beba5ee1-3620-4543-bc31-2f41aaf9e274",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4135,7 +4135,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "d0cdabc4-9d0c-46ff-834b-6f873b958328",
+					"id": "d68e1814-328e-4a66-a2fe-8f74e3161c8b",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4183,7 +4183,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "2e028135-e4a9-4573-a665-45a1e5ade560",
+					"id": "7e756f36-47ee-4cd4-8035-7e4f3f6110a3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4222,7 +4222,7 @@
 					"response": []
 				}
 			],
-			"id": "609eb1cc-f1a3-431f-928f-e352e83c47b7",
+			"id": "9f906401-27ce-4dfd-91b4-cd192209f4e4",
 			"description": "A list is a group of prospects that you can use to send list emails or to feed engagement programs. Learn more about lists in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_segmentation_overview.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/list-v5.html)"
 		},
 		{
@@ -4230,7 +4230,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "fd90249b-0af9-4c47-9136-746f86567a04",
+					"id": "958f3bad-10e6-4edd-b33c-fd36291623b2",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4287,7 +4287,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "218f587c-da35-4a39-bfc3-8ccfd6908f69",
+					"id": "bffac48d-bdd7-492a-adf2-06044b580665",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4469,14 +4469,14 @@
 					"response": []
 				}
 			],
-			"id": "21c8a048-093b-4502-baaa-24f0e1e342d3"
+			"id": "18f9b09e-4983-4ead-a837-9c908e85da54"
 		},
 		{
 			"name": "Lists Membership",
 			"item": [
 				{
 					"name": "Read",
-					"id": "377d4cb1-d14e-4f47-9172-59f379e546b3",
+					"id": "48619d93-1a18-4839-8e93-2e4fa2dfe293",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4533,7 +4533,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "366567d0-83c2-4b8b-aa78-647fe748ec7a",
+					"id": "7ef3f77a-49f2-465e-b8c5-c7c9cfd8c564",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4711,7 +4711,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "96df90d6-3470-4394-a7d1-3253c0c797e2",
+					"id": "a221f351-2ace-4677-808b-cdabaca05942",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4765,7 +4765,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "4d90235b-aaa9-4669-99c9-2db73524d934",
+					"id": "f1e23f0d-cfe5-4371-bd0c-e80610ddabcb",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4812,7 +4812,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "f617103a-86c8-4c9b-8bfb-2105929df0b3",
+					"id": "16a4ecd5-e69a-4926-9d8e-fc5cbb0bc4c9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4849,14 +4849,14 @@
 					"response": []
 				}
 			],
-			"id": "fbba3960-9878-4171-b771-7dc5849d440d"
+			"id": "70e737e3-158d-4f88-ac7c-ff7ba1f4230a"
 		},
 		{
 			"name": "Opportunity",
 			"item": [
 				{
 					"name": "Read",
-					"id": "72b1706d-9683-49a3-ab27-8cc9d878b8c2",
+					"id": "56d1d2a6-c5e7-4aac-96b6-69b76f48ee95",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -4913,7 +4913,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "1fb45f86-3f92-4ceb-b424-db58784ce2ed",
+					"id": "bfa3dfb3-915b-4b81-a7f4-fe89e8725af3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5005,14 +5005,14 @@
 					"response": []
 				}
 			],
-			"id": "4f098ae3-44eb-4212-a7be-38eafc854e6e"
+			"id": "335b899a-607a-416e-a7b2-a6b250dd1966"
 		},
 		{
 			"name": "Prospect",
 			"item": [
 				{
 					"name": "Read",
-					"id": "3617be22-0f38-4b2e-8062-97d0842ecf44",
+					"id": "901d992c-897e-4770-a812-71f15d4c1d57",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5069,7 +5069,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "54648e4a-547e-45fb-9db7-4990ce0a76b7",
+					"id": "90a0ae11-b4ce-4993-adc7-8568cd25e48b",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5313,7 +5313,7 @@
 				},
 				{
 					"name": "Update",
-					"id": "6fcf1345-105a-46d6-80c8-a7f4edd82ef6",
+					"id": "f0ba4707-82ad-4189-8c47-a5e266729ffc",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5367,7 +5367,7 @@
 				},
 				{
 					"name": "Create",
-					"id": "2c918fa9-7166-4abd-bbfa-973df3788058",
+					"id": "6a8eabff-77ff-4c80-851a-ca92943e711a",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5414,7 +5414,7 @@
 				},
 				{
 					"name": "Delete",
-					"id": "a5699aad-c55a-4899-b3ea-1fd5432a7e98",
+					"id": "80a67998-5a5d-4775-bcfd-ef7dfae80b20",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5452,7 +5452,7 @@
 				},
 				{
 					"name": "Undelete",
-					"id": "72052a2c-5c16-4b66-8290-534cb40f0b8b",
+					"id": "19ddfdc0-b199-4dd8-9ace-b5b56fe18f08",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5500,7 +5500,7 @@
 				},
 				{
 					"name": "Upsert Latest By Email",
-					"id": "58f21f03-90b7-4ac5-8aff-887b90da7ac8",
+					"id": "1013701d-0ab5-45f8-b92b-2d231fc4be8e",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5547,14 +5547,14 @@
 					"response": []
 				}
 			],
-			"id": "5271373f-4da0-4ef8-81a5-30555e3ccbe1"
+			"id": "a374139e-1e51-4cb4-99e0-05a1da0deb44"
 		},
 		{
 			"name": "Prospect Accounts",
 			"item": [
 				{
 					"name": "Read",
-					"id": "0f0de940-6551-4153-8814-7e2d99b7dbd5",
+					"id": "c6fb3715-181d-46a3-9e60-80dcfbd8b5e6",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5614,7 +5614,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "6d6cdad1-cbfd-46ba-bebf-34c56e31af55",
+					"id": "0fde7494-6ed7-48ca-9101-0c9c5c4a4391",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5701,7 +5701,7 @@
 					"response": []
 				}
 			],
-			"id": "95cad7f8-af5f-462a-b01c-9cfadf68474a",
+			"id": "d04200a6-e799-4522-8ffa-9e2a627b8c1d",
 			"description": "Prospect accounts group prospect accounts that work for the same company under the same umbrella, keeping all the information about the company in one place. Use prospect account resources to request the name and Pardot ID of your prospect accounts. Learn more about prospect accounts in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_prospect_account_parent.htm).\n\n[View this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/prospect-account-v5.html)"
 		},
 		{
@@ -5709,7 +5709,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "607075b9-f38c-41ae-9b21-a82b31eaa740",
+					"id": "f663a576-a542-47fc-a06d-14eafb2aa488",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5766,7 +5766,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "eda7fdfb-2c0b-4058-85e9-866eaf2cac8d",
+					"id": "7a7f91a8-4850-4fd0-9bfb-c3f73a6e1968",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5849,7 +5849,7 @@
 					"response": []
 				}
 			],
-			"id": "77fab05a-46c3-47b4-868e-dd07d00add38",
+			"id": "a7b27ee7-8619-4e7e-aaed-fcd72edb4275",
 			"description": "Tracker domains give your visitors a seamless transition between your hosted pages and forms and your Pardot assets. Learn more about tracker domains in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_admin_tracker_domain_parent.htm).\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/tracker-domain-v5.html)"
 		},
 		{
@@ -5857,7 +5857,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "5c950dce-d603-4b98-b0b6-572d694d69f8",
+					"id": "1307f803-f05c-473b-889d-381c430f77be",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -5914,7 +5914,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "68cb6fef-ce7c-49a3-a7d0-4048007107fd",
+					"id": "e0bd0385-e8b7-438b-bcb9-5222609b2b26",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6051,7 +6051,7 @@
 					"response": []
 				}
 			],
-			"id": "c1504584-e30f-4dd2-bd0e-ef05db34cbbc",
+			"id": "5cdeb40f-d6e7-4c67-a280-465824596f1b",
 			"description": "User resources tell you about the Pardot users in your organization. Learn more about users in [Salesforce Help](https://help.salesforce.com/articleView?id=sf.pardot_users_managing_users.htm).\n\n\n[See this object's documentation](https://developer.salesforce.com/docs/marketing/pardot/guide/user-v5.html)"
 		},
 		{
@@ -6059,7 +6059,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "7bf33405-1436-48eb-b537-90f563e6ddeb",
+					"id": "9912b06a-56aa-466a-9863-defa751733b3",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6116,7 +6116,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "9ad91899-0f62-4a16-b8b0-ee1049658f35",
+					"id": "60fec98c-e58c-4d67-8558-19837c58cfcf",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6255,7 +6255,7 @@
 					"response": []
 				}
 			],
-			"id": "252249d9-6aa2-4c67-a364-e4e62df3a609",
+			"id": "259f320e-4d8d-4575-a58a-6a5a78dc952a",
 			"description": "Use visit resources to learn about a user visit to your website. Discover the user's Pardot ID, Google Analytics parameters, and other information."
 		},
 		{
@@ -6263,7 +6263,7 @@
 			"item": [
 				{
 					"name": "Read",
-					"id": "e850a150-c161-4179-bf96-3ce339e55218",
+					"id": "c0382f37-f53b-4690-9fa5-e007c0c2359b",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6320,7 +6320,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "a1721217-cecf-47b7-abb7-56950250d7cd",
+					"id": "38f23e1c-cb4e-4597-bfe7-32ced071c34b",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6504,7 +6504,7 @@
 				},
 				{
 					"name": "Assign To Prospect",
-					"id": "57f2d0e6-c99e-4ba4-b16b-7ecd55f6f32c",
+					"id": "267c12c5-7362-49b1-a739-0517815ccfb8",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6553,7 +6553,7 @@
 				},
 				{
 					"name": "Identify Company",
-					"id": "10cf2de1-369d-4103-a3db-92ed623e7b9c",
+					"id": "964a1117-e211-4008-97e1-2661fa6ea16d",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6601,14 +6601,14 @@
 					"response": []
 				}
 			],
-			"id": "1d403274-8b6a-4bfd-a837-53256a9a755a"
+			"id": "5a756ae6-08be-49ad-8d6d-573cb31a6a09"
 		},
 		{
 			"name": "Visitor Activities",
 			"item": [
 				{
 					"name": "Read",
-					"id": "295c350d-8ba5-407c-8c25-4a5a768909db",
+					"id": "8327b691-4f3e-4943-90ac-e6c0fb7901e4",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6659,7 +6659,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "8f0919d0-e0c2-4e69-924b-c3c0bb1fc443",
+					"id": "001f85e4-f2b7-4a77-9f1a-9d51a9371cb9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6880,14 +6880,14 @@
 					"response": []
 				}
 			],
-			"id": "8c8556d1-82fc-4820-8d26-3798b546226b"
+			"id": "f95a3882-a4d5-4fb6-ab93-e34c2ac12e06"
 		},
 		{
 			"name": "Visitor Page Views",
 			"item": [
 				{
 					"name": "Read",
-					"id": "620e1239-c0e1-4ccc-8338-677c8ab1ef95",
+					"id": "772af826-4776-4356-b424-fc60e0060dd9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -6933,7 +6933,7 @@
 				},
 				{
 					"name": "Query",
-					"id": "8397b950-d0ab-4274-bbfc-fd24db632444",
+					"id": "2aefdb39-deda-4f42-aa0c-95d0f06801b8",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -7017,7 +7017,7 @@
 					"response": []
 				}
 			],
-			"id": "d6eb98b0-454e-442f-8162-f66a0746f120",
+			"id": "d19a1e5e-e7ce-450f-93ed-53be58c77abb",
 			"description": "Use visitor page view resources to learn about page views on your website."
 		},
 		{
@@ -7037,11 +7037,11 @@
 									""
 								],
 								"type": "text/javascript",
-								"id": "db44efec-194e-4e59-b709-c5428c329a84"
+								"id": "9937bda9-c122-49fd-b213-0bd2a296fcb1"
 							}
 						}
 					],
-					"id": "6bf7296d-8e57-4a6e-b2cb-4c0db4a7124a",
+					"id": "4982f218-b199-4ad0-829d-edbd089c1cb8",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -7110,7 +7110,7 @@
 					"response": []
 				}
 			],
-			"id": "6d2e46f1-7edb-4b6a-b7c9-f54ae38f6c38",
+			"id": "a368ca37-b031-44ee-84bd-052eaf42e6b6",
 			"description": "Authentication alternatives to Salesforce OAuth2.0.",
 			"auth": {
 				"type": "noauth"
@@ -7123,7 +7123,7 @@
 						"exec": [
 							""
 						],
-						"id": "03d8a7ae-f389-4a2a-8e3f-53e69b764f0b"
+						"id": "7929bb18-0a4a-4385-8368-68e7e6ef5083"
 					}
 				},
 				{
@@ -7133,7 +7133,7 @@
 						"exec": [
 							""
 						],
-						"id": "43d9293a-8910-4a96-b307-52a1d50439df"
+						"id": "c204807b-0245-477f-b8f6-8555064b32c4"
 					}
 				}
 			]
@@ -7197,7 +7197,7 @@
 				"exec": [
 					""
 				],
-				"id": "afa69c32-835e-4a33-9854-100231b22fb8"
+				"id": "828d9ffa-03df-4fe3-bbe3-f414bc64e43e"
 			}
 		},
 		{
@@ -7207,7 +7207,7 @@
 				"exec": [
 					""
 				],
-				"id": "0b6d41fd-e469-483a-891f-d0d95e6159ca"
+				"id": "332f95c9-9478-45ca-ad45-300e134ff3a4"
 			}
 		}
 	],
